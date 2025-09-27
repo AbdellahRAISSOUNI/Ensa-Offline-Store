@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #111111;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+}
+
+@layer base {
+  html, body, #__next {
+    height: 100%;
+  }
+  * {
+    @apply border-black selection:bg-[#8BC34A] selection:text-black;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight uppercase;
+  }
+  a {
+    @apply underline underline-offset-4 decoration-2 hover:decoration-[#8BC34A];
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  .btn-brutal {
+    @apply inline-flex items-center justify-center px-4 py-2 bg-[#8BC34A] text-black border-3 shadow-brutal hover:translate-x-1 hover:translate-y-1 active:translate-x-0 active:translate-y-0 transition-transform duration-150;
+  }
+  .card-brutal {
+    @apply bg-white border-3 p-4 shadow-brutal;
+  }
+  .tag-punch {
+    @apply inline-block px-2 py-1 bg-black text-white border-3 shadow-brutal uppercase tracking-wide text-xs;
+  }
+  .text-graffiti {
+    text-shadow: 2px 2px 0 #000, 4px 4px 0 #8BC34A;
+  }
+  .spray-outline {
+    filter: drop-shadow(0 0 0.35rem #333);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  .shadow-brutal-inverse {
+    box-shadow: -6px -6px 0 0 #000;
+  }
+  .shadow-brutal-accent {
+    box-shadow: 6px 6px 0 0 #333333;
+  }
+  .border-double-6 {
+    border-width: 6px;
+    border-style: double;
+  }
+  .will-change-transform {
+    will-change: transform;
+  }
+  .gpu {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+  .anim-wiggle { animation: wiggle 600ms ease-in-out; }
+  .anim-pop { animation: pop 180ms ease-out; }
+  .anim-skew-in { animation: skew-in 400ms ease-out; }
+  .anim-fade-up { animation: fade-up 500ms ease-out; }
+}
