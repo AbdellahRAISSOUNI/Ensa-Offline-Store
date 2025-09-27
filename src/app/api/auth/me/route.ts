@@ -1,6 +1,9 @@
 import { NextRequest } from 'next/server';
 import { createResponse, createErrorResponse, isAuthenticated } from '@/lib/api-utils';
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 // GET /api/auth/me - Get current user
 export async function GET(request: NextRequest) {
   try {

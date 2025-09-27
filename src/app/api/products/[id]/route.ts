@@ -3,6 +3,9 @@ import { connectToDatabase } from '@/lib/mongodb';
 import { Product } from '@/models/Product';
 import { createResponse, createErrorResponse, requireAuth, validateProductData } from '@/lib/api-utils';
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 // GET /api/products/[id] - Get single product (public)
 export async function GET(
   request: NextRequest,

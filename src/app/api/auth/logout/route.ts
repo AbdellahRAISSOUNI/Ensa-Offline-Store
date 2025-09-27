@@ -1,5 +1,8 @@
 import { createResponse, clearAuthCookie } from '@/lib/api-utils';
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 // POST /api/auth/logout - Admin logout
 export async function POST() {
   try {

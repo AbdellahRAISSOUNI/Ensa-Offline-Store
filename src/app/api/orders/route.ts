@@ -5,6 +5,9 @@ import { Product } from '@/models/Product';
 import { Settings } from '@/models/Settings';
 import { createResponse, createErrorResponse, requireAuth, validateOrderData } from '@/lib/api-utils';
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 // POST /api/orders - Create new order (public)
 export async function POST(request: NextRequest) {
   try {

@@ -3,6 +3,9 @@ import { connectToDatabase } from '@/lib/mongodb';
 import { Order } from '@/models/Order';
 import { createResponse, createErrorResponse, requireAuth } from '@/lib/api-utils';
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 // GET /api/orders/[id] - Get single order
 export async function GET(
   request: NextRequest,

@@ -1,6 +1,9 @@
 import { NextRequest } from 'next/server';
 import { createResponse, createErrorResponse, validateAdminCredentials, createSessionToken, setAuthCookie, isAuthenticated } from '@/lib/api-utils';
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 // POST /api/auth/login - Admin login
 export async function POST(request: NextRequest) {
   try {

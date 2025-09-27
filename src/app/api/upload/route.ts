@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
 import { requireAuth, createResponse, createErrorResponse } from '@/lib/api-utils';
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 // Configure Cloudinary - Using hardcoded values for testing
 const cloudinaryConfig = {
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'df5we7yoo',

@@ -3,6 +3,9 @@ import { connectToDatabase } from '@/lib/mongodb';
 import { Settings } from '@/models/Settings';
 import { createResponse, createErrorResponse, requireAuth, validateSettingsData } from '@/lib/api-utils';
 
+// Force dynamic rendering
+export const dynamic = 'force-dynamic';
+
 // GET /api/settings - Get application settings (public)
 export async function GET() {
   try {
