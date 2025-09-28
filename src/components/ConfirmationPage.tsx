@@ -13,7 +13,6 @@ interface ConfirmationPageProps {
     city: string;
     customText?: string;
     totalPrice: number;
-    shippingMethod: string;
   };
 }
 
@@ -54,8 +53,7 @@ export function ConfirmationPage({ orderData }: ConfirmationPageProps) {
       size: "L",
       city: "Tetouan",
       customText: "Grace Under Pressure",
-      totalPrice: 104,
-      shippingMethod: "standard"
+      totalPrice: 104
     };
   };
 
@@ -183,8 +181,7 @@ export function ConfirmationPage({ orderData }: ConfirmationPageProps) {
 
   const getExpectedDelivery = () => {
     const today = new Date();
-    const deliveryDays = order.shippingMethod === "express" ? 2 : 
-                        order.shippingMethod === "pickup" ? 0 : 4;
+    const deliveryDays = 4; // Standard delivery time
     
     const deliveryDate = new Date(today);
     deliveryDate.setDate(today.getDate() + deliveryDays);
@@ -262,10 +259,6 @@ export function ConfirmationPage({ orderData }: ConfirmationPageProps) {
                   <span className="font-bold text-brand-accent">Size:</span>
                   <span className="text-black">{order.size}</span>
                 </div>
-                <div className="flex justify-between">
-                  <span className="font-bold text-brand-accent">Shipping:</span>
-                  <span className="text-black capitalize">{order.shippingMethod}</span>
-                </div>
                 {order.customText && (
                   <div className="flex justify-between">
                     <span className="font-bold text-brand-accent">Custom Text:</span>
@@ -330,7 +323,7 @@ export function ConfirmationPage({ orderData }: ConfirmationPageProps) {
                     Shipping
                   </h3>
                   <p className="text-sm text-brand-accent font-bold">
-                    Your order will be shipped via {order.shippingMethod} delivery. Expected delivery: <strong>{getExpectedDelivery()}</strong>
+                    Your order will be shipped to {order.city}. Expected delivery: <strong>{getExpectedDelivery()}</strong>
                   </p>
                 </div>
               </div>

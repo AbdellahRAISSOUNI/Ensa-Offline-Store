@@ -7,12 +7,12 @@ This folder contains comprehensive documentation for the ENSA OFFLINE brutalist 
 ### Core Documentation
 - **[API Documentation](api.md)** - Complete REST API reference with endpoints, request/response formats, and examples
 - **[Database Schemas](schemas.md)** - MongoDB schema definitions, validation rules, and relationships
-- **[Admin Guide](admin-guide.md)** - Comprehensive guide for using the admin dashboard
+- **[Admin Guide](admin-guide.md)** - Comprehensive guide for using the modernized admin dashboard
 
 ### Quick Reference
 - **API Endpoints**: `/api/products`, `/api/orders`, `/api/settings`
 - **Admin Login**: Username `admin`, Password `ensa2024`
-- **Order Statuses**: pending → contacted → printed → shipping → delivered
+- **Order Statuses**: pending → contacted → printed → delivering → delivered → finished
 - **Supported Cities**: Tetouan (free), Casablanca, Rabat, Marrakech, Fez, Agadir, etc.
 
 ## 🎯 Getting Started
@@ -38,8 +38,8 @@ This folder contains comprehensive documentation for the ENSA OFFLINE brutalist 
 
 ### Key Features
 - **Customer Store**: Product showcase, ordering, confirmation
-- **Admin Dashboard**: Orders, products, settings, analytics management
-- **Real-time Updates**: Live status changes and notifications
+- **Modern Admin Dashboard**: Professional sidebar, dual view modes, export functionality
+- **Real-time Updates**: Live status changes and brutalist notifications
 - **Mobile Responsive**: Full functionality on all devices
 - **Brutalist Design**: Bold, geometric aesthetic with green/black theme
 

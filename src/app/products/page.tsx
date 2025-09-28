@@ -1,5 +1,6 @@
 "use client";
 import { ProductShowcase } from "@/components/ProductShowcase";
+import { BrutalistLoader } from "@/components/ui/BrutalistLoader";
 import { useEffect, useState } from "react";
 
 interface Product {
@@ -52,12 +53,7 @@ export default function ProductsPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-4xl mb-4">⏳</div>
-          <div className="text-lg font-display font-bold uppercase tracking-tight text-black">
-            Loading Products...
-          </div>
-        </div>
+        <BrutalistLoader size="lg" text="Loading Products..." variant="blocks" />
       </div>
     );
   }

@@ -33,20 +33,30 @@ The ENSA OFFLINE admin dashboard provides comprehensive management tools for you
 
 ## 📦 Orders Management
 
-### Order Table Features
-- **Pagination**: 10 orders per page
-- **Search**: By order ID, customer name, city, or product
-- **Filtering**: By order status
-- **Sorting**: By date, order ID, customer, or status
-- **Bulk Selection**: Select multiple orders for batch operations
+### Modern Orders Interface
+- **Dual View Modes**: Switch between card view and table view
+- **Card View**: Modern card layout with customer name-product title format
+- **Table View**: Traditional table with inline status updates
+- **Smart Truncation**: Long names automatically truncated with "..."
+- **Status Dropdown**: Easy-to-reach status updates in card headers
+- **Category Icons**: Product category icons (Shirt/Package) for visual identification
+
+### Pagination System
+- **Configurable Items Per Page**: 6, 12, 24, or 48 items
+- **Smart Navigation**: First, Previous, Next, Last buttons
+- **Page Numbers**: Clickable page numbers with current page highlight
+- **Items Counter**: Shows "X-Y of Z items" information
+- **Auto-reset**: Returns to page 1 when filters change
+- **Responsive Design**: Adapts to different screen sizes
+- **Brutalist Styling**: Matches website design theme
 
 ### Order Status Workflow
 1. **Pending** - New order received
 2. **Contacted** - Customer contacted via WhatsApp
 3. **Printed** - Product manufactured/printed
-4. **Shipping** - Order shipped to customer
+4. **Delivering** - Order shipped to customer
 5. **Delivered** - Order delivered successfully
-6. **Cancelled** - Order cancelled
+6. **Finished** - Order completed and closed
 
 ### Order Actions
 - **View Details**: Complete order information modal
@@ -60,10 +70,24 @@ The ENSA OFFLINE admin dashboard provides comprehensive management tools for you
 - **Pricing Breakdown**: Base price, custom fee, shipping, total
 - **Order Timeline**: Creation and update timestamps
 - **Status Management**: Direct status updates
+- **Click Outside to Close**: Click backdrop to close modal
+- **Professional Icons**: Lucide React icons throughout
+
+### Delete Confirmation Modals
+- **Order Deletion**: Confirmation modal with order details
+- **Product Deletion**: Confirmation modal with product information
+- **Brutalist Styling**: Matches website design theme
+- **Click Outside to Close**: Click backdrop to cancel deletion
+- **Action Buttons**: Clear Cancel and Delete options
 
 ### Export Functionality
-- **CSV Export**: Download filtered orders as CSV
-- **Includes**: Order ID, customer, product, total, status, date
+- **Dual Export Options**: CSV and styled HTML formats
+- **CSV Export**: Traditional CSV format for data processing
+- **Styled HTML Export**: Beautiful HTML with brutalist design
+- **Timestamped Filenames**: Includes date and hour (YYYY-MM-DDTHH-MM-SS)
+- **Complete Data**: All order information included
+- **Professional Branding**: ENSA OFFLINE header and footer
+- **Support Contact**: Updated to abdellahraissouni@gmail.com
 - **Filtered Data**: Only exports currently filtered orders
 
 ## 🛍️ Products Management
@@ -161,10 +185,12 @@ The ENSA OFFLINE admin dashboard provides comprehensive management tools for you
 - **Error Prevention**: Save button disabled with errors
 
 #### Success/Error Notifications
-- **Slide-in Animation**: GSAP-powered entrance
-- **Auto-dismiss**: Closes after 5 seconds
+- **Brutalist Design**: Matches website's brutalist theme
+- **Slide-in Animation**: GSAP-powered entrance from right
+- **Auto-dismiss**: Closes after 5 seconds automatically
 - **Manual Close**: X button to close immediately
 - **Type Indicators**: Success ✅, Error ❌, Info ℹ️
+- **Immediate Feedback**: Shows instantly for status changes and actions
 
 ## 📈 Analytics Dashboard
 
@@ -214,6 +240,14 @@ The ENSA OFFLINE admin dashboard provides comprehensive management tools for you
 - **Responsive Grids**: Adapts to screen size
 
 ## 🎨 Design System
+
+### Modern Sidebar Navigation
+- **Professional Icons**: Lucide React icons instead of emojis
+- **Collapsed State**: Optimized 80px width with centered icons
+- **Brand Logo**: "E" logo for collapsed state
+- **User Avatar**: Circular avatar with user initial
+- **Smooth Transitions**: Enhanced hover effects and shadows
+- **Responsive Design**: Adapts to different screen sizes
 
 ### Brutalist Elements
 - **Thick Borders**: `border-6` throughout

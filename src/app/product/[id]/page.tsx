@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ImageGallery } from "@/components/ImageGallery";
 import { ProductInfo } from "@/components/ProductInfo";
+import { BrutalistLoader } from "@/components/ui/BrutalistLoader";
 
 interface Product {
   _id: string;
@@ -94,12 +95,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-4xl mb-4">⏳</div>
-          <div className="text-lg font-display font-bold uppercase tracking-tight text-black">
-            Loading Product...
-          </div>
-        </div>
+        <BrutalistLoader size="lg" text="Loading Product..." variant="blocks" />
       </div>
     );
   }
@@ -164,36 +160,99 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
           </div>
         </div>
 
-        {/* Additional Info Section */}
+        {/* Enhanced Feature Cards Section */}
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white border-6 shadow-brutal p-6 text-center">
-            <div className="text-3xl mb-3">🚚</div>
-            <h3 className="text-lg font-display font-bold uppercase tracking-tight text-black mb-2">
-              Fast Delivery
-            </h3>
-            <p className="text-sm text-brand-accent font-bold">
-              2-3 days in Tetouan, 3-5 days nationwide
-            </p>
+          {/* Premium Materials Card */}
+          <div className="group relative bg-white border-6 shadow-brutal hover:shadow-brutalLg transition-all duration-300 overflow-hidden">
+            {/* Background Pattern */}
+            <div className="absolute inset-0 opacity-5 group-hover:opacity-10 transition-opacity duration-300">
+              <div className="absolute top-2 left-2 w-8 h-8 bg-black border-2 border-brand-green rotate-45"></div>
+              <div className="absolute bottom-2 right-2 w-6 h-6 bg-brand-green border-2 border-black -rotate-45"></div>
+              <div className="absolute top-1/2 left-1/2 w-4 h-4 bg-black border-2 border-brand-green rotate-12 transform -translate-x-1/2 -translate-y-1/2"></div>
+            </div>
+            
+            {/* Icon */}
+            <div className="relative z-10 flex justify-center mb-4 pt-6">
+              <div className="w-16 h-16 bg-black border-4 border-brand-green shadow-brutal flex items-center justify-center group-hover:rotate-12 group-hover:scale-110 transition-all duration-300">
+                <svg className="w-8 h-8 text-brand-green" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                </svg>
+              </div>
+            </div>
+            
+            <div className="relative z-10 p-6 text-center">
+              <h3 className="text-xl font-display font-black uppercase tracking-tight text-black mb-3 group-hover:text-brand-green transition-colors duration-300">
+                PREMIUM MATERIALS
+              </h3>
+              <p className="text-sm text-brand-accent font-bold leading-relaxed">
+                High-quality fabrics and printing techniques for lasting durability
+              </p>
+            </div>
+            
+            {/* Hover Accent Line */}
+            <div className="absolute bottom-0 left-0 h-1 w-0 bg-brand-green group-hover:w-full transition-all duration-500"></div>
           </div>
 
-          <div className="bg-white border-6 shadow-brutal p-6 text-center">
-            <div className="text-3xl mb-3">🎨</div>
-            <h3 className="text-lg font-display font-bold uppercase tracking-tight text-black mb-2">
-              Custom Design
-            </h3>
-            <p className="text-sm text-brand-accent font-bold">
-              Add your own text or design
-            </p>
+          {/* Custom Design Card */}
+          <div className="group relative bg-white border-6 shadow-brutal hover:shadow-brutalLg transition-all duration-300 overflow-hidden">
+            {/* Background Pattern */}
+            <div className="absolute inset-0 opacity-5 group-hover:opacity-10 transition-opacity duration-300">
+              <div className="absolute top-3 right-3 w-6 h-10 bg-brand-green border-2 border-black rotate-12"></div>
+              <div className="absolute bottom-3 left-3 w-8 h-6 bg-black border-2 border-brand-green -rotate-12"></div>
+              <div className="absolute top-1/3 right-1/3 w-4 h-4 bg-brand-green border-2 border-black rotate-45"></div>
+            </div>
+            
+            {/* Icon */}
+            <div className="relative z-10 flex justify-center mb-4 pt-6">
+              <div className="w-16 h-16 bg-brand-green border-4 border-black shadow-brutal flex items-center justify-center group-hover:rotate-12 group-hover:scale-110 transition-all duration-300">
+                <svg className="w-8 h-8 text-black" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+              </div>
+            </div>
+            
+            <div className="relative z-10 p-6 text-center">
+              <h3 className="text-xl font-display font-black uppercase tracking-tight text-black mb-3 group-hover:text-brand-green transition-colors duration-300">
+                CUSTOM DESIGN
+              </h3>
+              <p className="text-sm text-brand-accent font-bold leading-relaxed">
+                Personalize with your own text, graphics, and unique styling
+              </p>
+            </div>
+            
+            {/* Hover Accent Line */}
+            <div className="absolute bottom-0 left-0 h-1 w-0 bg-brand-green group-hover:w-full transition-all duration-500"></div>
           </div>
 
-          <div className="bg-white border-6 shadow-brutal p-6 text-center">
-            <div className="text-3xl mb-3">✅</div>
-            <h3 className="text-lg font-display font-bold uppercase tracking-tight text-black mb-2">
-              Quality Guarantee
-            </h3>
-            <p className="text-sm text-brand-accent font-bold">
-              100% satisfaction or money back
-            </p>
+          {/* Quality Guarantee Card */}
+          <div className="group relative bg-white border-6 shadow-brutal hover:shadow-brutalLg transition-all duration-300 overflow-hidden">
+            {/* Background Pattern */}
+            <div className="absolute inset-0 opacity-5 group-hover:opacity-10 transition-opacity duration-300">
+              <div className="absolute top-2 right-2 w-10 h-6 bg-black border-2 border-brand-green -rotate-12"></div>
+              <div className="absolute bottom-2 left-2 w-6 h-8 bg-brand-green border-2 border-black rotate-12"></div>
+              <div className="absolute top-1/2 right-1/4 w-3 h-3 bg-black border-2 border-brand-green rotate-45"></div>
+            </div>
+            
+            {/* Icon */}
+            <div className="relative z-10 flex justify-center mb-4 pt-6">
+              <div className="w-16 h-16 bg-black border-4 border-brand-green shadow-brutal flex items-center justify-center group-hover:rotate-12 group-hover:scale-110 transition-all duration-300">
+                <svg className="w-8 h-8 text-brand-green" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+                </svg>
+              </div>
+            </div>
+            
+            <div className="relative z-10 p-6 text-center">
+              <h3 className="text-xl font-display font-black uppercase tracking-tight text-black mb-3 group-hover:text-brand-green transition-colors duration-300">
+                QUALITY GUARANTEE
+              </h3>
+              <p className="text-sm text-brand-accent font-bold leading-relaxed">
+                100% satisfaction guaranteed or full money back
+              </p>
+            </div>
+            
+            {/* Hover Accent Line */}
+            <div className="absolute bottom-0 left-0 h-1 w-0 bg-brand-green group-hover:w-full transition-all duration-500"></div>
           </div>
         </div>
       </div>

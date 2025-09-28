@@ -87,9 +87,9 @@ type OrderStatus =
   | 'pending'      // Order received, awaiting contact
   | 'contacted'   // Customer contacted
   | 'printed'     // Product printed/manufactured
-  | 'shipping'    // Order shipped
+  | 'delivering'  // Order shipped
   | 'delivered'   // Order delivered
-  | 'cancelled'   // Order cancelled
+  | 'finished'    // Order completed and closed
 ```
 
 ### Validation Rules

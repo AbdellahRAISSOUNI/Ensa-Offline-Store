@@ -22,7 +22,6 @@ interface FormData {
   size: string;
   city: string;
   customText: string;
-  shippingMethod: string;
 }
 
 interface FormErrors {
@@ -31,7 +30,6 @@ interface FormErrors {
   size?: string;
   city?: string;
   customText?: string;
-  shippingMethod?: string;
 }
 
 export function OrderForm({ product }: OrderFormProps) {
@@ -45,8 +43,7 @@ export function OrderForm({ product }: OrderFormProps) {
     whatsappNumber: "",
     size: "",
     city: "",
-    customText: "",
-    shippingMethod: "standard"
+    customText: ""
   });
   
   const [errors, setErrors] = useState<FormErrors>({});
@@ -97,11 +94,6 @@ export function OrderForm({ product }: OrderFormProps) {
     return city ? city.fee : 35; // Default to "Other" fee if city not found
   };
 
-  const shippingMethods = [
-    { id: "standard", name: "Standard Delivery", days: "3-5 days", fee: 0 },
-    { id: "express", name: "Express Delivery", days: "1-2 days", fee: 15 },
-    { id: "pickup", name: "Store Pickup", days: "Same day", fee: 0 }
-  ];
 
   const generateOrderId = () => {
     const date = new Date();
@@ -180,9 +172,6 @@ export function OrderForm({ product }: OrderFormProps) {
       newErrors.customText = "Custom text must be 50 characters or less";
     }
 
-    if (!formData.shippingMethod) {
-      newErrors.shippingMethod = "Please select a shipping method";
-    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -202,11 +191,6 @@ export function OrderForm({ product }: OrderFormProps) {
       total += selectedCity.fee;
     }
     
-    // Add shipping method fee
-    const selectedShipping = shippingMethods.find(method => method.id === formData.shippingMethod);
-    if (selectedShipping) {
-      total += selectedShipping.fee;
-    }
     
     return total;
   };
@@ -295,8 +279,7 @@ export function OrderForm({ product }: OrderFormProps) {
         customerInfo: {
           fullName: formData.fullName,
           whatsappNumber: formData.whatsappNumber,
-          city: formData.city,
-          shippingMethod: formData.shippingMethod
+          city: formData.city
         },
         pricing: {
           basePrice: product.price,
@@ -342,8 +325,7 @@ export function OrderForm({ product }: OrderFormProps) {
             size: formData.size,
             city: formData.city,
             customText: isCustomTextEnabled ? formData.customText : undefined,
-            totalPrice: calculateTotalPrice(),
-            shippingMethod: formData.shippingMethod
+            totalPrice: calculateTotalPrice()
           };
         
           // Store order data in sessionStorage for confirmation page
@@ -391,12 +373,11 @@ export function OrderForm({ product }: OrderFormProps) {
   const sizeRef = useRef<HTMLSelectElement>(null);
   const cityRef = useRef<HTMLSelectElement>(null);
   const customTextRef = useRef<HTMLInputElement>(null);
-  const shippingRef = useRef<HTMLSelectElement>(null);
 
   // Update price when relevant fields change
   useEffect(() => {
     animatePriceUpdate();
-  }, [formData.city, formData.shippingMethod, isCustomTextEnabled]);
+  }, [formData.city, isCustomTextEnabled]);
 
   return (
     <div className="max-w-2xl mx-auto">
@@ -563,34 +544,6 @@ export function OrderForm({ product }: OrderFormProps) {
           </div>
         )}
 
-        {/* Shipping Method */}
-        <div className="form-field">
-          <label className="block text-sm font-bold uppercase tracking-wider text-black mb-2">
-            Shipping Method *
-          </label>
-          <select
-            ref={shippingRef}
-            name="shippingMethod"
-            value={formData.shippingMethod}
-            onChange={(e) => handleInputChange("shippingMethod", e.target.value)}
-            onFocus={() => handleFieldFocus(shippingRef)}
-            onBlur={() => handleFieldBlur(shippingRef)}
-            className={`w-full px-4 py-3 border-3 shadow-brutal focus:shadow-brutalMd transition-all duration-200 font-body text-black ${
-              errors.shippingMethod ? "border-red-500" : "border-black"
-            }`}
-          >
-            {shippingMethods.map((method) => (
-              <option key={method.id} value={method.id}>
-                {method.name} - {method.days} {method.fee > 0 ? `(+$${method.fee})` : ""}
-              </option>
-            ))}
-          </select>
-          {errors.shippingMethod && (
-            <div className="text-red-500 text-sm font-bold mt-1 animate-pulse">
-              {errors.shippingMethod}
-            </div>
-          )}
-        </div>
 
         {/* Price Summary */}
         <div ref={priceRef} className="bg-black text-white p-6 border-6 shadow-brutal">
@@ -613,14 +566,6 @@ export function OrderForm({ product }: OrderFormProps) {
                 <span>Shipping to {formData.city}:</span>
                 <span>
                   +${cities.find(city => city.name === formData.city)?.fee || 0}
-                </span>
-              </div>
-            )}
-            {formData.shippingMethod && (
-              <div className="flex justify-between">
-                <span>Shipping Method:</span>
-                <span>
-                  +${shippingMethods.find(method => method.id === formData.shippingMethod)?.fee || 0}
                 </span>
               </div>
             )}

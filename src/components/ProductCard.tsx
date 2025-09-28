@@ -33,6 +33,7 @@ export function ProductCard({ product, index }: ProductCardProps) {
   const imageRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     if (!cardRef.current) return;
@@ -124,8 +125,22 @@ export function ProductCard({ product, index }: ProductCardProps) {
     });
   };
 
-  // Get the best image for display
-  const displayImage = product.images[0]?.medium || product.images[0]?.original || '';
+  // Navigation functions
+  const navigateImage = (direction: 'prev' | 'next') => {
+    if (product.images.length <= 1) return;
+    
+    setCurrentImageIndex(prev => {
+      if (direction === 'next') {
+        return prev === product.images.length - 1 ? 0 : prev + 1;
+      } else {
+        return prev === 0 ? product.images.length - 1 : prev - 1;
+      }
+    });
+  };
+
+  // Get the current image for display
+  const currentImage = product.images[currentImageIndex];
+  const displayImage = currentImage?.medium || currentImage?.original || '';
 
   return (
     <div
@@ -135,47 +150,95 @@ export function ProductCard({ product, index }: ProductCardProps) {
       onMouseLeave={handleMouseLeave}
     >
       {/* Product Image */}
-      <Link href={`/product/${product._id}`} className="block">
-        <div className="relative h-64 sm:h-80 overflow-hidden">
-          <div
-            ref={imageRef}
-            className="w-full h-full bg-gray-200 flex items-center justify-center"
-            style={{
-              backgroundImage: displayImage ? `url(${displayImage})` : 'none',
-              backgroundSize: 'cover',
-              backgroundPosition: 'center'
-            }}
-          >
-            {!displayImage && (
-              <div className="text-gray-400 text-4xl font-display">
-                {product.name.charAt(0)}
-              </div>
-            )}
-          </div>
-          
-          {/* Hover Overlay */}
-          <div
-            ref={overlayRef}
-            className="absolute inset-0 bg-black bg-opacity-60 opacity-0 flex items-center justify-center"
-          >
-            <div className="text-center text-white">
-              <div className="text-sm font-bold uppercase tracking-wider mb-2">
-                Available Sizes
-              </div>
-              <div className="flex flex-wrap gap-1 justify-center">
-                {product.sizes.map((size) => (
-                  <span
-                    key={size}
-                    className="px-2 py-1 bg-white text-black text-xs font-bold border"
-                  >
-                    {size}
-                  </span>
-                ))}
+      <div className="relative">
+        <Link href={`/product/${product._id}`} className="block">
+          <div className="relative h-64 sm:h-80 overflow-hidden">
+            <div
+              ref={imageRef}
+              className="w-full h-full bg-gray-200 flex items-center justify-center"
+              style={{
+                backgroundImage: displayImage ? `url(${displayImage})` : 'none',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              }}
+            >
+              {!displayImage && (
+                <div className="text-gray-400 text-4xl font-display">
+                  {product.name.charAt(0)}
+                </div>
+              )}
+            </div>
+            
+            {/* Hover Overlay */}
+            <div
+              ref={overlayRef}
+              className="absolute inset-0 bg-black bg-opacity-60 opacity-0 flex items-center justify-center"
+            >
+              <div className="text-center text-white">
+                <div className="text-sm font-bold uppercase tracking-wider mb-2">
+                  Available Sizes
+                </div>
+                <div className="flex flex-wrap gap-1 justify-center">
+                  {product.sizes.map((size) => (
+                    <span
+                      key={size}
+                      className="px-2 py-1 bg-white text-black text-xs font-bold border"
+                    >
+                      {size}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </Link>
+        </Link>
+
+        {/* Image Navigation Arrows - Only show if multiple images */}
+        {product.images.length > 1 && (
+          <>
+            {/* Previous Arrow */}
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                navigateImage('prev');
+              }}
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black text-white border-3 shadow-brutal hover:shadow-brutalMd transition-all duration-200 flex items-center justify-center group opacity-0 group-hover:opacity-100 z-10"
+            >
+              <svg
+                className="w-4 h-4 transform -translate-x-0.5"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+              </svg>
+            </button>
+
+            {/* Next Arrow */}
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                navigateImage('next');
+              }}
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-brand-green text-black border-3 shadow-brutal hover:shadow-brutalMd transition-all duration-200 flex items-center justify-center group opacity-0 group-hover:opacity-100 z-10"
+            >
+              <svg
+                className="w-4 h-4 transform translate-x-0.5"
+                fill="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/>
+              </svg>
+            </button>
+
+            {/* Image Counter */}
+            <div className="absolute top-2 right-2 bg-black text-white px-2 py-1 text-xs font-bold uppercase tracking-wider border-2 shadow-brutal opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              {currentImageIndex + 1} / {product.images.length}
+            </div>
+          </>
+        )}
+      </div>
 
       {/* Product Info */}
       <div className="p-4 sm:p-6">

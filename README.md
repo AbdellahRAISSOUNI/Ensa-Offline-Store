@@ -17,14 +17,16 @@ A brutalist graffiti-style merch website built with Next.js 14, TypeScript, Tail
 - **Mobile-First Design** - Fully responsive across all devices
 
 ### Admin Dashboard Features
+- **Modern Sidebar Navigation** - Professional Lucide React icons with collapsed state
 - **Secure Authentication** - Login system with session management
-- **Orders Management** - Complete CRUD operations with pagination and filtering
-- **Product Management** - Manage product inventory and pricing
+- **Modern Orders Management** - Dual view modes (cards/table) with pagination and filtering
+- **Product Management** - Manage product inventory and pricing with professional icons
 - **Settings Panel** - Comprehensive configuration for prices, shipping, and site settings
 - **Analytics Dashboard** - Sales metrics and performance insights
-- **Real-time Updates** - Live status updates and notifications
-- **Export Functionality** - CSV export for orders and reports
-- **Bulk Operations** - Mass actions for orders and products
+- **Export Functionality** - CSV and styled HTML export with timestamped filenames
+- **Brutalist Notifications** - Custom notification system matching website design
+- **Click-Outside-to-Close** - All modals close when clicking outside
+- **Real-time Updates** - Live status updates and immediate feedback
 
 ## 🚀 Getting Started
 
@@ -108,7 +110,7 @@ ensaofflin/
 - **Authentication**: Custom session-based auth with React Context
 - **State Management**: React Context API + SessionStorage
 - **Design System**: Custom brutalist utilities and components
-- **Icons**: Emoji-based icons for brutalist aesthetic
+- **Icons**: Lucide React icons for professional appearance
 
 ## 🔐 Admin Access
 
@@ -164,7 +166,7 @@ ensaofflin/
     shippingFee: number;
     totalPrice: number;
   };
-  status: 'pending' | 'contacted' | 'printed' | 'shipping' | 'delivered' | 'cancelled';
+  status: 'pending' | 'contacted' | 'printed' | 'delivering' | 'delivered' | 'finished';
   createdAt: Date;
   updatedAt: Date;
 }
@@ -276,6 +278,7 @@ The entire application is built with mobile-first design principles:
 
 - **API Documentation** - Complete API reference in `/docs/api.md`
 - **Schema Documentation** - Database schema details in `/docs/schemas.md`
+- **Admin Guide** - Comprehensive admin dashboard guide in `/docs/admin-guide.md`
 - **Component Documentation** - Inline code documentation
 
 ## 🔧 Troubleshooting

@@ -24,7 +24,8 @@ import {
   MessageCircle,
   Printer,
   Download,
-  MoreVertical
+  MoreVertical,
+  Plus
 } from "lucide-react";
 
 interface Order {
@@ -55,6 +56,27 @@ interface Order {
   updatedAt: string;
 }
 
+interface Product {
+  _id: string;
+  name: string;
+  price: number;
+  sizes: string[];
+  isCustomizable: boolean;
+  customPrice?: number;
+  category?: string;
+  isActive: boolean;
+}
+
+interface CreateOrderFormData {
+  customerName: string;
+  whatsappNumber: string;
+  city: string;
+  productId: string;
+  size: string;
+  customText: string;
+  isCustom: boolean;
+}
+
 export default function OrdersTab() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
@@ -70,6 +92,19 @@ export default function OrdersTab() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(6);
   const [editingStatusId, setEditingStatusId] = useState<string | null>(null);
+  const [showCreateOrder, setShowCreateOrder] = useState(false);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [createOrderData, setCreateOrderData] = useState<CreateOrderFormData>({
+    customerName: '',
+    whatsappNumber: '',
+    city: '',
+    productId: '',
+    size: '',
+    customText: '',
+    isCustom: false
+  });
+  const [isCreatingOrder, setIsCreatingOrder] = useState(false);
+  const [loadingProducts, setLoadingProducts] = useState(false);
 
   // Category icons mapping
   const categoryIcons = {
@@ -92,6 +127,22 @@ export default function OrdersTab() {
     { value: "finished", label: "Finished", icon: CheckCircle, color: "green" },
   ];
 
+  // Moroccan cities with shipping fees
+  const cities = [
+    { name: "Tetouan", fee: 0, isTetouan: true },
+    { name: "Tangier", fee: 15 },
+    { name: "Casablanca", fee: 25 },
+    { name: "Rabat", fee: 20 },
+    { name: "Fez", fee: 18 },
+    { name: "Meknes", fee: 16 },
+    { name: "Agadir", fee: 30 },
+    { name: "Marrakech", fee: 28 },
+    { name: "Oujda", fee: 22 },
+    { name: "Kenitra", fee: 18 },
+    { name: "Tetouan Province", fee: 5 },
+    { name: "Other", fee: 35 }
+  ];
+
   // Fetch orders
   const fetchOrders = async () => {
     try {
@@ -109,6 +160,111 @@ export default function OrdersTab() {
       console.error('Error fetching orders:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Fetch products
+  const fetchProducts = async () => {
+    try {
+      setLoadingProducts(true);
+      console.log('Fetching products...');
+      const response = await fetch('/api/products');
+      console.log('Products response status:', response.status);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('Products data:', data);
+      
+      if (data.success && data.data?.products) {
+        const activeProducts = data.data.products.filter((p: Product) => p.isActive);
+        console.log('Active products:', activeProducts);
+        setProducts(activeProducts);
+      } else {
+        console.error('No products found in response:', data);
+        setProducts([]);
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error);
+      setProducts([]);
+    } finally {
+      setLoadingProducts(false);
+    }
+  };
+
+  // Create new order
+  const createOrder = async () => {
+    try {
+      setIsCreatingOrder(true);
+
+      const selectedProduct = products.find(p => p._id === createOrderData.productId);
+      if (!selectedProduct) {
+        throw new Error('Selected product not found');
+      }
+
+      const selectedCity = cities.find(c => c.name === createOrderData.city);
+      const shippingFee = selectedCity ? selectedCity.fee : 35;
+      const customFee = createOrderData.isCustom && selectedProduct.customPrice ? selectedProduct.customPrice : 0;
+      const totalPrice = selectedProduct.price + customFee + shippingFee;
+
+      const orderData = {
+        productDetails: {
+          productId: createOrderData.productId,
+          size: createOrderData.size,
+          isCustom: createOrderData.isCustom,
+          customText: createOrderData.isCustom ? createOrderData.customText : undefined
+        },
+        customerInfo: {
+          fullName: createOrderData.customerName,
+          whatsappNumber: createOrderData.whatsappNumber,
+          city: createOrderData.city
+        },
+        pricing: {
+          basePrice: selectedProduct.price,
+          customFee,
+          shippingFee,
+          totalPrice
+        }
+      };
+
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create order');
+      }
+
+      const result = await response.json();
+      
+      if (result.success) {
+        // Reset form
+        setCreateOrderData({
+          customerName: '',
+          whatsappNumber: '',
+          city: '',
+          productId: '',
+          size: '',
+          customText: '',
+          isCustom: false
+        });
+        setShowCreateOrder(false);
+        showNotification('success', 'Order created successfully!');
+        fetchOrders(); // Refresh orders list
+      } else {
+        throw new Error(result.message || 'Failed to create order');
+      }
+    } catch (error) {
+      console.error('Error creating order:', error);
+      showNotification('error', `Failed to create order: ${error}`);
+    } finally {
+      setIsCreatingOrder(false);
     }
   };
 
@@ -588,6 +744,7 @@ export default function OrdersTab() {
 
   useEffect(() => {
     fetchOrders();
+    fetchProducts();
   }, [filterStatus]);
 
   // Enhanced status functions with icons
@@ -705,8 +862,18 @@ export default function OrdersTab() {
             </p>
           </div>
           <div className="flex items-center gap-3">
-          <button
-            onClick={fetchOrders}
+            <button
+              onClick={() => {
+                setShowCreateOrder(true);
+                fetchProducts(); // Ensure products are fetched when modal opens
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white border-3 border-black shadow-brutal hover:shadow-brutalMd transition-all duration-200 font-bold uppercase tracking-wider"
+            >
+              <Plus className="w-4 h-4" />
+              Create Order
+            </button>
+            <button
+              onClick={fetchOrders}
               className="flex items-center gap-2 px-4 py-2 bg-brand-green text-black border-3 border-black shadow-brutal hover:shadow-brutalMd transition-all duration-200 font-bold uppercase tracking-wider"
             >
               <RefreshCw className="w-4 h-4" />
@@ -725,7 +892,7 @@ export default function OrdersTab() {
             >
               <Download className="w-4 h-4" />
               Export Styled
-          </button>
+            </button>
           </div>
         </div>
       </div>
@@ -1320,7 +1487,258 @@ export default function OrdersTab() {
             </div>
           </div>
         </div>
-      )}
+       )}
+
+       {/* Create Order Modal */}
+       {showCreateOrder && (
+         <div 
+           className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50"
+           onClick={() => setShowCreateOrder(false)}
+         >
+           <div 
+             className="bg-white border-6 border-black shadow-brutalLg max-w-2xl w-full max-h-[90vh] overflow-y-auto rounded-lg"
+             onClick={(e) => e.stopPropagation()}
+           >
+             <div className="p-6">
+               <div className="flex justify-between items-center mb-6">
+                 <h2 className="text-2xl font-display font-bold uppercase tracking-tight text-black">
+                   Create New Order
+                 </h2>
+                 <button
+                   onClick={() => setShowCreateOrder(false)}
+                   className="p-2 hover:bg-gray-100 transition-colors rounded"
+                 >
+                   <XCircle className="w-6 h-6 text-gray-500" />
+                 </button>
+               </div>
+
+               <div className="space-y-6">
+                 {/* Customer Information */}
+                 <div className="space-y-4">
+                   <h3 className="text-lg font-bold text-black border-b-3 border-black pb-2">Customer Information</h3>
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                     <div>
+                       <label className="block text-sm font-bold uppercase tracking-wider text-black mb-2">
+                         Customer Name *
+                       </label>
+                       <input
+                         type="text"
+                         value={createOrderData.customerName}
+                         onChange={(e) => setCreateOrderData(prev => ({ ...prev, customerName: e.target.value }))}
+                         className="w-full px-4 py-3 border-3 border-black shadow-brutal focus:shadow-brutalMd transition-all duration-200 font-body text-black placeholder-gray-500"
+                         placeholder="Enter customer name"
+                       />
+                     </div>
+                     <div>
+                       <label className="block text-sm font-bold uppercase tracking-wider text-black mb-2">
+                         WhatsApp Number *
+                       </label>
+                       <input
+                         type="tel"
+                         value={createOrderData.whatsappNumber}
+                         onChange={(e) => setCreateOrderData(prev => ({ ...prev, whatsappNumber: e.target.value }))}
+                         className="w-full px-4 py-3 border-3 border-black shadow-brutal focus:shadow-brutalMd transition-all duration-200 font-body text-black placeholder-gray-500"
+                         placeholder="+212 6XX XXX XXX"
+                       />
+                     </div>
+                     <div className="md:col-span-2">
+                       <label className="block text-sm font-bold uppercase tracking-wider text-black mb-2">
+                         City *
+                       </label>
+                       <select
+                         value={createOrderData.city}
+                         onChange={(e) => setCreateOrderData(prev => ({ ...prev, city: e.target.value }))}
+                         className="w-full px-4 py-3 border-3 border-black shadow-brutal focus:shadow-brutalMd transition-all duration-200 font-body text-black"
+                       >
+                         <option value="">Select City</option>
+                         {cities.map((city) => (
+                           <option key={city.name} value={city.name}>
+                             {city.name} {city.fee > 0 ? `(+$${city.fee})` : city.isTetouan ? "(FREE)" : ""}
+                           </option>
+                         ))}
+                       </select>
+                     </div>
+                   </div>
+                 </div>
+
+                 {/* Product Selection */}
+                 <div className="space-y-4">
+                   <div className="flex justify-between items-center">
+                     <h3 className="text-lg font-bold text-black border-b-3 border-black pb-2">Product Selection</h3>
+                     <button
+                       onClick={fetchProducts}
+                       disabled={loadingProducts}
+                       className="px-3 py-1 bg-gray-200 text-black border-2 border-black shadow-brutal hover:shadow-brutalMd transition-all duration-200 font-bold text-sm uppercase tracking-wider rounded disabled:opacity-50"
+                     >
+                       {loadingProducts ? "Loading..." : "Refresh"}
+                     </button>
+                   </div>
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                     <div>
+                       <label className="block text-sm font-bold uppercase tracking-wider text-black mb-2">
+                         Product *
+                       </label>
+                       <select
+                         value={createOrderData.productId}
+                         onChange={(e) => {
+                           const product = products.find(p => p._id === e.target.value);
+                           setCreateOrderData(prev => ({ 
+                             ...prev, 
+                             productId: e.target.value,
+                             size: '',
+                             customText: '',
+                             isCustom: false
+                           }));
+                         }}
+                         disabled={loadingProducts}
+                         className="w-full px-4 py-3 border-3 border-black shadow-brutal focus:shadow-brutalMd transition-all duration-200 font-body text-black disabled:bg-gray-100"
+                       >
+                         <option value="">
+                           {loadingProducts ? "Loading products..." : "Select Product"}
+                         </option>
+                         {products.length === 0 && !loadingProducts ? (
+                           <option value="" disabled>No products available</option>
+                         ) : (
+                           products.map((product) => (
+                             <option key={product._id} value={product._id}>
+                               {product.name} - ${product.price}
+                             </option>
+                           ))
+                         )}
+                       </select>
+                     </div>
+                     <div>
+                       <label className="block text-sm font-bold uppercase tracking-wider text-black mb-2">
+                         Size *
+                       </label>
+                       <select
+                         value={createOrderData.size}
+                         onChange={(e) => setCreateOrderData(prev => ({ ...prev, size: e.target.value }))}
+                         disabled={!createOrderData.productId}
+                         className="w-full px-4 py-3 border-3 border-black shadow-brutal focus:shadow-brutalMd transition-all duration-200 font-body text-black disabled:bg-gray-100"
+                       >
+                         <option value="">Select Size</option>
+                         {createOrderData.productId && products.find(p => p._id === createOrderData.productId)?.sizes.map((size) => (
+                           <option key={size} value={size}>
+                             {size}
+                           </option>
+                         ))}
+                       </select>
+                     </div>
+                   </div>
+                 </div>
+
+                 {/* Custom Text Option */}
+                 {createOrderData.productId && products.find(p => p._id === createOrderData.productId)?.isCustomizable && (
+                   <div className="space-y-4">
+                     <h3 className="text-lg font-bold text-black border-b-3 border-black pb-2">Custom Text</h3>
+                     <div className="space-y-4">
+                       <label className="flex items-center space-x-3 cursor-pointer">
+                         <input
+                           type="checkbox"
+                           checked={createOrderData.isCustom}
+                           onChange={(e) => setCreateOrderData(prev => ({ 
+                             ...prev, 
+                             isCustom: e.target.checked,
+                             customText: e.target.checked ? prev.customText : ''
+                           }))}
+                           className="w-5 h-5 text-brand-green border-3 focus:ring-brand-green"
+                         />
+                         <span className="text-sm font-bold uppercase tracking-wider text-black">
+                           Add Custom Text (+${products.find(p => p._id === createOrderData.productId)?.customPrice || 0})
+                         </span>
+                       </label>
+                       
+                       {createOrderData.isCustom && (
+                         <div>
+                           <input
+                             type="text"
+                             value={createOrderData.customText}
+                             onChange={(e) => setCreateOrderData(prev => ({ ...prev, customText: e.target.value }))}
+                             className="w-full px-4 py-3 border-3 border-black shadow-brutal focus:shadow-brutalMd transition-all duration-200 font-body text-black placeholder-gray-500"
+                             placeholder="Enter custom text (max 50 characters)"
+                             maxLength={50}
+                           />
+                           <div className="text-xs text-brand-accent font-bold mt-1">
+                             {createOrderData.customText.length}/50 characters
+                           </div>
+                         </div>
+                       )}
+                     </div>
+                   </div>
+                 )}
+
+                 {/* Order Summary */}
+                 {createOrderData.productId && createOrderData.size && createOrderData.city && (
+                   <div className="bg-black text-white p-6 border-6 shadow-brutal">
+                     <h3 className="text-lg font-display font-bold uppercase tracking-tight mb-4">
+                       Order Summary
+                     </h3>
+                     <div className="space-y-2 text-sm">
+                       <div className="flex justify-between">
+                         <span>Product:</span>
+                         <span>{products.find(p => p._id === createOrderData.productId)?.name}</span>
+                       </div>
+                       <div className="flex justify-between">
+                         <span>Size:</span>
+                         <span>{createOrderData.size}</span>
+                       </div>
+                       <div className="flex justify-between">
+                         <span>Base Price:</span>
+                         <span>${products.find(p => p._id === createOrderData.productId)?.price}</span>
+                       </div>
+                       {createOrderData.isCustom && (
+                         <div className="flex justify-between">
+                           <span>Custom Text:</span>
+                           <span>+${products.find(p => p._id === createOrderData.productId)?.customPrice || 0}</span>
+                         </div>
+                       )}
+                       <div className="flex justify-between">
+                         <span>Shipping to {createOrderData.city}:</span>
+                         <span>
+                           +${cities.find(city => city.name === createOrderData.city)?.fee || 0}
+                         </span>
+                       </div>
+                       <div className="border-t border-white pt-2 mt-4">
+                         <div className="flex justify-between font-bold text-brand-green text-lg">
+                           <span>Total:</span>
+                           <span>
+                             ${(() => {
+                               const product = products.find(p => p._id === createOrderData.productId);
+                               const city = cities.find(c => c.name === createOrderData.city);
+                               const basePrice = product?.price || 0;
+                               const customFee = createOrderData.isCustom && product?.customPrice ? product.customPrice : 0;
+                               const shippingFee = city?.fee || 35;
+                               return (basePrice + customFee + shippingFee).toFixed(2);
+                             })()}
+                           </span>
+                         </div>
+                       </div>
+                     </div>
+                   </div>
+                 )}
+
+                 {/* Action Buttons */}
+                 <div className="flex gap-4">
+                   <button
+                     onClick={() => setShowCreateOrder(false)}
+                     className="flex-1 px-4 py-3 bg-gray-500 text-white border-3 border-black shadow-brutal hover:shadow-brutalMd transition-all duration-200 font-bold uppercase tracking-wider rounded"
+                   >
+                     Cancel
+                   </button>
+                   <button
+                     onClick={createOrder}
+                     disabled={isCreatingOrder || !createOrderData.customerName || !createOrderData.whatsappNumber || !createOrderData.city || !createOrderData.productId || !createOrderData.size}
+                     className="flex-1 px-4 py-3 bg-blue-500 text-white border-3 border-black shadow-brutal hover:shadow-brutalMd transition-all duration-200 font-bold uppercase tracking-wider rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                   >
+                     {isCreatingOrder ? "Creating..." : "Create Order"}
+                   </button>
+                 </div>
+               </div>
+             </div>
+           </div>
+         </div>
+       )}
     </div>
   );
 }

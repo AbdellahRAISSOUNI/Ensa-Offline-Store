@@ -132,7 +132,7 @@ Update an order (typically status updates).
 **Request Body:**
 ```json
 {
-  "status": "pending | contacted | printed | shipping | delivered | cancelled"
+  "status": "pending | contacted | printed | delivering | delivered | finished"
 }
 ```
 
@@ -235,9 +235,9 @@ type OrderStatus =
   | 'pending'      // Order received, awaiting contact
   | 'contacted'    // Customer contacted
   | 'printed'      // Product printed/manufactured
-  | 'shipping'     // Order shipped
+  | 'delivering'   // Order shipped
   | 'delivered'    // Order delivered
-  | 'cancelled'    // Order cancelled
+  | 'finished'     // Order completed and closed
 ```
 
 ### Product Categories
@@ -360,9 +360,8 @@ Form validation errors include detailed field information:
 - **Enable Debugging**: Use console.log for debugging
 - **Test Edge Cases**: Verify error handling works correctly
 
-## Webhooks (Future)
+## Support
 
-Planned webhook endpoints for order status updates:
-- `POST /webhooks/order-status-changed`
-- `POST /webhooks/payment-completed`
-- `POST /webhooks/shipping-updated`
+For technical support and questions about the API, contact:
+- **Email**: abdellahraissouni@gmail.com
+- **Response Time**: Within 24 hours

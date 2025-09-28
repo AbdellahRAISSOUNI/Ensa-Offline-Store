@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import { BrutalistLoader } from "@/components/ui/BrutalistLoader";
 import { OrderForm } from "@/components/OrderForm";
 
 interface Product {
@@ -85,12 +86,7 @@ export default function OrderPage({ params }: OrderPageProps) {
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-4xl mb-4">⏳</div>
-          <div className="text-lg font-display font-bold uppercase tracking-tight text-black">
-            Loading Product...
-          </div>
-        </div>
+        <BrutalistLoader size="lg" text="Loading Product..." variant="blocks" />
       </div>
     );
   }

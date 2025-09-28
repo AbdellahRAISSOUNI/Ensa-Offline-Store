@@ -2,6 +2,7 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { BrutalistLoader } from "@/components/ui/BrutalistLoader";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -19,14 +20,9 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="text-4xl mb-4">⏳</div>
-          <div className="text-lg font-display font-bold uppercase tracking-tight text-black">
-            Loading...
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen bg-white flex items-center justify-center">
+      <BrutalistLoader size="lg" text="Loading..." variant="blocks" />
+    </div>
     );
   }
 
