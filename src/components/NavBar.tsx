@@ -91,8 +91,9 @@ export function NavBar() {
 
       // Navigation items stagger animation
       const navItems = navRef.current?.querySelectorAll(".nav-item");
-      gsap.fromTo(
-        navItems,
+      if (navItems) {
+        gsap.fromTo(
+          navItems,
         { 
           opacity: 0, 
           y: -15,
@@ -108,6 +109,7 @@ export function NavBar() {
           delay: 0.4
         }
       );
+      }
 
       // Scroll-triggered header effects (background blur)
       ScrollTrigger.create({

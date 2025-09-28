@@ -62,7 +62,8 @@ export function ProductInfo({ product }: ProductInfoProps) {
 
         // Form elements stagger
         const formElements = formRef.current?.querySelectorAll(".form-element");
-        gsap.fromTo(formElements,
+        if (formElements) {
+          gsap.fromTo(formElements,
           { opacity: 0, y: 20 },
           { 
             opacity: 1, 
@@ -73,6 +74,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
             delay: 0.5
           }
         );
+        }
       }, infoRef);
 
       return () => ctx.revert();

@@ -26,7 +26,8 @@ export function ImageGallery({ images, productName }: ImageGalleryProps) {
 
       // Thumbnails stagger animation
       const thumbnails = thumbnailsRef.current?.querySelectorAll(".thumbnail");
-      gsap.fromTo(thumbnails,
+      if (thumbnails) {
+        gsap.fromTo(thumbnails,
         { opacity: 0, scale: 0.8 },
         { 
           opacity: 1, 
@@ -37,6 +38,7 @@ export function ImageGallery({ images, productName }: ImageGalleryProps) {
           delay: 0.3
         }
       );
+      }
     }, galleryRef);
 
     return () => ctx.revert();

@@ -102,7 +102,8 @@ export function ConfirmationPage({ orderData }: ConfirmationPageProps) {
 
       // Timeline stagger animation
       const timelineItems = timelineRef.current?.querySelectorAll(".timeline-item");
-      gsap.fromTo(timelineItems,
+      if (timelineItems) {
+        gsap.fromTo(timelineItems,
         { 
           x: -30, 
           opacity: 0
@@ -116,10 +117,12 @@ export function ConfirmationPage({ orderData }: ConfirmationPageProps) {
           delay: 1.0
         }
       );
+      }
 
       // Social links animation
       const socialItems = socialRef.current?.querySelectorAll(".social-item");
-      gsap.fromTo(socialItems,
+      if (socialItems) {
+        gsap.fromTo(socialItems,
         { 
           y: 20, 
           opacity: 0,
@@ -135,6 +138,7 @@ export function ConfirmationPage({ orderData }: ConfirmationPageProps) {
           delay: 1.5
         }
       );
+      }
 
       // Floating animation for celebration elements
       celebrationElements?.forEach((element) => {

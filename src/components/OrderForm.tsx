@@ -119,7 +119,8 @@ export function OrderForm({ product }: OrderFormProps) {
 
         // Form fields stagger animation
         const formFields = formRef.current?.querySelectorAll(".form-field");
-        gsap.fromTo(formFields,
+        if (formFields) {
+          gsap.fromTo(formFields,
           { opacity: 0, x: -20 },
           { 
             opacity: 1, 
@@ -130,6 +131,7 @@ export function OrderForm({ product }: OrderFormProps) {
             delay: 0.2
           }
         );
+        }
       }, formRef);
 
       return () => ctx.revert();
