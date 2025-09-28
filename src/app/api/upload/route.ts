@@ -136,7 +136,7 @@ export async function GET(request: NextRequest) {
     // Get images from Cloudinary
     const result = await cloudinary.search
       .expression('folder:ensa-offline/products')
-      .sort_by([['created_at', 'desc']])
+      .sort_by('created_at', 'desc')
       .max_results(50)
       .execute();
 

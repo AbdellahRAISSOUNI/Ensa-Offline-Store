@@ -819,9 +819,7 @@ export default function OrdersTab() {
     order.customerInfo.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     order.customerInfo.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
     order.productDetails.productId.name.toLowerCase().includes(searchTerm.toLowerCase())
-    ).filter(order => filterStatus === '' || order.status === filterStatus),
-    sortBy,
-    sortOrder
+    ).filter(order => filterStatus === '' || order.status === filterStatus)
   );
 
   // Pagination logic
@@ -1010,7 +1008,7 @@ export default function OrdersTab() {
           {paginatedOrders.map((order) => {
             const statusInfo = getStatusInfo(order.status);
             const StatusIcon = statusInfo.icon;
-            const CategoryIcon = categoryIcons[order.productDetails.productId.category as keyof typeof categoryIcons] || categoryIcons.default;
+            const CategoryIcon = categoryIcons.default;
             
             return (
               <div key={order._id} className="bg-white border-6 border-black shadow-brutal hover:shadow-brutalMd transition-all duration-200 rounded-lg overflow-hidden">
@@ -1138,7 +1136,7 @@ export default function OrdersTab() {
                  {paginatedOrders.map((order) => {
                   const statusInfo = getStatusInfo(order.status);
                   const StatusIcon = statusInfo.icon;
-                  const CategoryIcon = categoryIcons[order.productDetails.productId.category as keyof typeof categoryIcons] || categoryIcons.default;
+                  const CategoryIcon = categoryIcons.default;
                   
                   return (
                     <tr key={order._id} className="hover:bg-gray-50 transition-colors">

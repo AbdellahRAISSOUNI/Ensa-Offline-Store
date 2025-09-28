@@ -21,6 +21,8 @@ interface Product {
   isActive: boolean;
   stock?: number;
   tags?: string[];
+  createdAt: string;
+  updatedAt: string;
 }
 
 export default function ProductsPage() {
@@ -60,7 +62,7 @@ export default function ProductsPage() {
 
   return (
     <div className="min-h-screen bg-white">
-      <ProductShowcase initialProducts={products} initialTotal={products.length} />
+      <ProductShowcase products={products} />
     </div>
   );
 }

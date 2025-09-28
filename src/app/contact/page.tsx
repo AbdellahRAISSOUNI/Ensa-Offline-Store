@@ -56,7 +56,7 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {/* WhatsApp Card */}
           <div 
-            ref={(el) => el && (cardsRef.current[0] = el)}
+            ref={(el) => { if (el) cardsRef.current[0] = el; }}
             className="group relative bg-white border-6 shadow-brutal hover:shadow-brutalLg transition-all duration-300 overflow-hidden"
           >
             {/* Background Pattern */}
@@ -96,7 +96,7 @@ export default function ContactPage() {
 
           {/* Email Card */}
           <div 
-            ref={(el) => el && (cardsRef.current[1] = el)}
+            ref={(el) => { if (el) cardsRef.current[1] = el; }}
             className="group relative bg-white border-6 shadow-brutal hover:shadow-brutalLg transition-all duration-300 overflow-hidden"
           >
             {/* Background Pattern */}
@@ -134,7 +134,7 @@ export default function ContactPage() {
 
           {/* Instagram Card */}
           <div 
-            ref={(el) => el && (cardsRef.current[2] = el)}
+            ref={(el) => { if (el) cardsRef.current[2] = el; }}
             className="group relative bg-white border-6 shadow-brutal hover:shadow-brutalLg transition-all duration-300 overflow-hidden md:col-span-2 lg:col-span-1"
           >
             {/* Background Pattern */}

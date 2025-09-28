@@ -21,6 +21,7 @@ interface RecentOrder {
   };
   productDetails: {
     productId: {
+      _id: string;
       name: string;
     };
     size?: string;
