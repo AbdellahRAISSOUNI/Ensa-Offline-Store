@@ -487,34 +487,30 @@ export default function ProductsTab() {
                   <label className="block text-sm font-bold uppercase tracking-wider text-black mb-2">
                     Sizes *
                   </label>
-                  <div className="space-y-2">
-                    {formData.sizes.map((size, index) => (
-                      <div key={index} className="flex gap-2">
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
+                    {['XS', 'S', 'M', 'L', 'XL', 'XXL', 'One Size'].map((size) => (
+                      <label key={size} className="flex items-center space-x-2 cursor-pointer">
                         <input
-                          type="text"
-                          value={size}
-                          onChange={(e) => updateSize(index, e.target.value)}
-                          className="flex-1 px-3 py-2 border-3 border-gray-300 focus:border-black transition-colors font-body text-black"
-                          placeholder="Size (e.g., S, M, L, XL)"
-                          required
+                          type="checkbox"
+                          checked={formData.sizes.includes(size)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setFormData(prev => ({ ...prev, sizes: [...prev.sizes, size] }));
+                            } else {
+                              setFormData(prev => ({ ...prev, sizes: prev.sizes.filter(s => s !== size) }));
+                            }
+                          }}
+                          className="w-4 h-4 text-brand-green border-2 border-gray-300 rounded focus:ring-brand-green focus:ring-2"
                         />
-                        <button
-                          type="button"
-                          onClick={() => removeSize(index)}
-                          className="px-3 py-2 bg-red-500 text-white font-bold border-3 border-black"
-                        >
-                          ×
-                        </button>
-                      </div>
+                        <span className="text-sm font-bold uppercase tracking-wider text-black">
+                          {size}
+                        </span>
+                      </label>
                     ))}
-                    <button
-                      type="button"
-                      onClick={addSize}
-                      className="btn-brutal bg-brand-green text-black font-bold uppercase tracking-wider"
-                    >
-                      Add Size
-                    </button>
                   </div>
+                  {formData.sizes.length === 0 && (
+                    <p className="text-sm text-red-500 mt-2">Please select at least one size</p>
+                  )}
                 </div>
 
                 {/* Customization */}

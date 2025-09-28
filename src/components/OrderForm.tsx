@@ -1,16 +1,18 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { gsap } from "gsap";
 import { useRouter } from "next/navigation";
 
 interface OrderFormProps {
   product: {
-    id: string;
+    _id?: string;
+    id?: string;
     name: string;
     price: number;
     sizes: string[];
     isCustomizable: boolean;
     customPrice?: number;
+    category?: string;
+    stock?: number;
   };
 }
 
@@ -51,6 +53,28 @@ export function OrderForm({ product }: OrderFormProps) {
   const [isCustomTextEnabled, setIsCustomTextEnabled] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Pre-fill form with URL parameters
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const size = urlParams.get('size');
+    const city = urlParams.get('city');
+    const custom = urlParams.get('custom');
+    const customText = urlParams.get('customText');
+
+    if (size || city || custom || customText) {
+      setFormData(prev => ({
+        ...prev,
+        size: size || prev.size,
+        city: city || prev.city,
+        customText: customText || prev.customText
+      }));
+
+      if (custom === 'true') {
+        setIsCustomTextEnabled(true);
+      }
+    }
+  }, []);
+
   // Moroccan cities with shipping fees
   const cities = [
     { name: "Tetouan", fee: 0, isTetouan: true },
@@ -66,6 +90,12 @@ export function OrderForm({ product }: OrderFormProps) {
     { name: "Tetouan Province", fee: 5 },
     { name: "Other", fee: 35 }
   ];
+
+  // Calculate shipping fee based on city
+  const calculateShippingFee = (cityName: string) => {
+    const city = cities.find(c => c.name === cityName);
+    return city ? city.fee : 35; // Default to "Other" fee if city not found
+  };
 
   const shippingMethods = [
     { id: "standard", name: "Standard Delivery", days: "3-5 days", fee: 0 },
@@ -85,29 +115,35 @@ export function OrderForm({ product }: OrderFormProps) {
   useEffect(() => {
     if (!formRef.current) return;
 
-    const ctx = gsap.context(() => {
-      // Form entrance animation
-      gsap.fromTo(formRef.current,
-        { opacity: 0, y: 30 },
-        { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }
-      );
+    const initAnimation = async () => {
+      const { gsap } = await import("gsap");
+      
+      const ctx = gsap.context(() => {
+        // Form entrance animation
+        gsap.fromTo(formRef.current,
+          { opacity: 0, y: 30 },
+          { opacity: 1, y: 0, duration: 0.8, ease: "power2.out" }
+        );
 
-      // Form fields stagger animation
-      const formFields = formRef.current?.querySelectorAll(".form-field");
-      gsap.fromTo(formFields,
-        { opacity: 0, x: -20 },
-        { 
-          opacity: 1, 
-          x: 0, 
-          duration: 0.6, 
-          ease: "power2.out",
-          stagger: 0.1,
-          delay: 0.2
-        }
-      );
-    }, formRef);
+        // Form fields stagger animation
+        const formFields = formRef.current?.querySelectorAll(".form-field");
+        gsap.fromTo(formFields,
+          { opacity: 0, x: -20 },
+          { 
+            opacity: 1, 
+            x: 0, 
+            duration: 0.6, 
+            ease: "power2.out",
+            stagger: 0.1,
+            delay: 0.2
+          }
+        );
+      }, formRef);
 
-    return () => ctx.revert();
+      return () => ctx.revert();
+    };
+
+    initAnimation();
   }, []);
 
   const validateWhatsApp = (number: string): boolean => {
@@ -184,12 +220,13 @@ export function OrderForm({ product }: OrderFormProps) {
     }
   };
 
-  const handleCustomTextToggle = () => {
+  const handleCustomTextToggle = async () => {
     setIsCustomTextEnabled(!isCustomTextEnabled);
     
     // Animate custom text section
     const customSection = formRef.current?.querySelector(".custom-text-section");
     if (customSection) {
+      const { gsap } = await import("gsap");
       gsap.to(customSection, {
         height: !isCustomTextEnabled ? "auto" : 0,
         opacity: !isCustomTextEnabled ? 1 : 0,
@@ -204,9 +241,10 @@ export function OrderForm({ product }: OrderFormProps) {
     }
   };
 
-  const animateError = (fieldName: string) => {
+  const animateError = async (fieldName: string) => {
     const field = formRef.current?.querySelector(`[name="${fieldName}"]`);
     if (field) {
+      const { gsap } = await import("gsap");
       gsap.to(field, {
         x: -10,
         duration: 0.1,
@@ -217,8 +255,9 @@ export function OrderForm({ product }: OrderFormProps) {
     }
   };
 
-  const animatePriceUpdate = () => {
+  const animatePriceUpdate = async () => {
     if (priceRef.current) {
+      const { gsap } = await import("gsap");
       gsap.to(priceRef.current, {
         scale: 1.05,
         duration: 0.2,
@@ -242,40 +281,91 @@ export function OrderForm({ product }: OrderFormProps) {
 
     setIsSubmitting(true);
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
-    // Success animation
-    gsap.to(formRef.current, {
-      opacity: 0,
-      y: -20,
-      duration: 0.5,
-      ease: "power2.in",
-      onComplete: () => {
-        // Redirect to confirmation page with order data
-        const orderData = {
-          orderId: generateOrderId(),
-          customerName: formData.fullName,
-          whatsappNumber: formData.whatsappNumber,
-          productName: product.name,
+    try {
+      // Create order data
+      const orderData = {
+        productDetails: {
+          productId: product._id || product.id,
+          name: product.name,
+          price: product.price,
           size: formData.size,
-          city: formData.city,
           customText: isCustomTextEnabled ? formData.customText : undefined,
-          totalPrice: calculateTotalPrice(),
+          customPrice: isCustomTextEnabled && product.customPrice ? product.customPrice : 0
+        },
+        customerInfo: {
+          fullName: formData.fullName,
+          whatsappNumber: formData.whatsappNumber,
+          city: formData.city,
           shippingMethod: formData.shippingMethod
-        };
-        
-        // Store order data in sessionStorage for confirmation page
-        sessionStorage.setItem('orderData', JSON.stringify(orderData));
-        
-        // Redirect to confirmation page
-        router.push('/confirmation');
+        },
+        pricing: {
+          basePrice: product.price,
+          customPrice: isCustomTextEnabled && product.customPrice ? product.customPrice : 0,
+          shippingFee: calculateShippingFee(formData.city),
+          totalPrice: calculateTotalPrice()
+        }
+      };
+
+      // Submit order to API
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit order');
       }
-    });
+
+      const result = await response.json();
+      
+      if (!result.success) {
+        throw new Error(result.message || 'Failed to create order');
+      }
+
+      // Success animation
+      const { gsap } = await import("gsap");
+      gsap.to(formRef.current, {
+        opacity: 0,
+        y: -20,
+        duration: 0.5,
+        ease: "power2.in",
+        onComplete: () => {
+          // Redirect to confirmation page with order data
+          const confirmationData = {
+            orderId: result.data._id,
+            customerName: formData.fullName,
+            whatsappNumber: formData.whatsappNumber,
+            productName: product.name,
+            size: formData.size,
+            city: formData.city,
+            customText: isCustomTextEnabled ? formData.customText : undefined,
+            totalPrice: calculateTotalPrice(),
+            shippingMethod: formData.shippingMethod
+          };
+        
+          // Store order data in sessionStorage for confirmation page
+          sessionStorage.setItem('orderData', JSON.stringify(confirmationData));
+          
+          // Redirect to confirmation page
+          router.push('/confirmation');
+        }
+      });
+    } catch (error) {
+      console.error('Error submitting order:', error);
+      setIsSubmitting(false);
+      
+      // Show error message
+      setFormData(prev => ({ ...prev, fullName: '' })); // Reset form
+      alert('Failed to submit order. Please try again.');
+    }
   };
 
-  const handleFieldFocus = (fieldRef: React.RefObject<HTMLInputElement | HTMLSelectElement>) => {
+  const handleFieldFocus = async (fieldRef: React.RefObject<HTMLInputElement | HTMLSelectElement>) => {
     if (fieldRef.current) {
+      const { gsap } = await import("gsap");
       gsap.to(fieldRef.current, {
         scale: 1.02,
         duration: 0.2,
@@ -284,8 +374,9 @@ export function OrderForm({ product }: OrderFormProps) {
     }
   };
 
-  const handleFieldBlur = (fieldRef: React.RefObject<HTMLInputElement | HTMLSelectElement>) => {
+  const handleFieldBlur = async (fieldRef: React.RefObject<HTMLInputElement | HTMLSelectElement>) => {
     if (fieldRef.current) {
+      const { gsap } = await import("gsap");
       gsap.to(fieldRef.current, {
         scale: 1,
         duration: 0.2,

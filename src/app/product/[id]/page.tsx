@@ -1,8 +1,26 @@
 "use client";
-import { useEffect, useRef } from "react";
-import { gsap } from "gsap";
+import { useEffect, useRef, useState } from "react";
 import { ImageGallery } from "@/components/ImageGallery";
 import { ProductInfo } from "@/components/ProductInfo";
+
+interface Product {
+  _id: string;
+  name: string;
+  price: number;
+  description: string;
+  images: Array<{
+    original: string;
+    thumbnail: string;
+    medium: string;
+    large: string;
+  }>;
+  sizes: string[];
+  isCustomizable: boolean;
+  customPrice?: number;
+  category: string;
+  stock?: number;
+  tags?: string[];
+}
 
 interface ProductDetailPageProps {
   params: {
@@ -13,103 +31,104 @@ interface ProductDetailPageProps {
 export default function ProductDetailPage({ params }: ProductDetailPageProps) {
   const pageRef = useRef<HTMLDivElement>(null);
   const productId = params.id;
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Mock product data - in real app, this would come from API
-  const getProductById = (id: string) => {
-    const mockProducts = [
-      {
-        id: "1",
-        name: "ENSA Hoodie",
-        price: 89,
-        description: "Premium quality hoodie with brutalist design. Made from 100% cotton with reinforced stitching. Features our signature ENSA logo and 'grace under pressure' tagline.",
-        images: [
-          "https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600&h=600&fit=crop",
-          "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&h=600&fit=crop",
-          "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600&h=600&fit=crop"
-        ],
-        sizes: ["S", "M", "L", "XL", "XXL"],
-        isCustomizable: true,
-        customPrice: 15
-      },
-      {
-        id: "2",
-        name: "OFFLINE Tee",
-        price: 45,
-        description: "Classic cotton t-shirt with bold OFFLINE branding. Perfect for everyday wear with our signature brutalist aesthetic.",
-        images: [
-          "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&h=600&fit=crop",
-          "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600&h=600&fit=crop"
-        ],
-        sizes: ["S", "M", "L", "XL", "XXL"],
-        isCustomizable: true,
-        customPrice: 10
-      },
-      {
-        id: "3",
-        name: "Grace Cap",
-        price: 35,
-        description: "Premium baseball cap with embroidered ENSA logo. One size fits all with adjustable strap.",
-        images: [
-          "https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=600&h=600&fit=crop"
-        ],
-        sizes: ["One Size"],
-        isCustomizable: false
-      },
-      {
-        id: "4",
-        name: "Pressure Tank",
-        price: 65,
-        description: "Sleeveless tank top perfect for warm weather. Features bold ENSA branding and comfortable fit.",
-        images: [
-          "https://images.unsplash.com/photo-1503341504253-dff4815485f1?w=600&h=600&fit=crop"
-        ],
-        sizes: ["S", "M", "L", "XL"],
-        isCustomizable: true,
-        customPrice: 12
-      },
-      {
-        id: "5",
-        name: "ENSA Sticker Pack",
-        price: 12,
-        description: "Set of 5 vinyl stickers featuring ENSA designs. Perfect for laptops, phones, and other surfaces.",
-        images: [
-          "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=600&fit=crop"
-        ],
-        sizes: ["One Size"],
-        isCustomizable: false
-      },
-      {
-        id: "6",
-        name: "OFFLINE Longsleeve",
-        price: 55,
-        description: "Long sleeve t-shirt with OFFLINE branding. Made from premium cotton blend for comfort and durability.",
-        images: [
-          "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600&h=600&fit=crop"
-        ],
-        sizes: ["S", "M", "L", "XL"],
-        isCustomizable: true,
-        customPrice: 8
+  // Fetch product from API
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`/api/products/${productId}`);
+        
+        if (!response.ok) {
+          if (response.status === 404) {
+            throw new Error('Product not found');
+          }
+          throw new Error('Failed to fetch product');
+        }
+        
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+          setProduct(data.data);
+        } else {
+          throw new Error('Invalid product data');
+        }
+      } catch (error) {
+        console.error('Error fetching product:', error);
+        setError(error instanceof Error ? error.message : 'Failed to load product');
+      } finally {
+        setLoading(false);
       }
-    ];
-    
-    return mockProducts.find(product => product.id === id) || mockProducts[0];
-  };
+    };
 
-  const mockProduct = getProductById(productId);
+    if (productId) {
+      fetchProduct();
+    }
+  }, [productId]);
 
   useEffect(() => {
     if (!pageRef.current) return;
 
-    const ctx = gsap.context(() => {
-      // Page entrance animation
-      gsap.fromTo(pageRef.current,
-        { opacity: 0 },
-        { opacity: 1, duration: 0.6, ease: "power2.out" }
-      );
-    }, pageRef);
+    // Dynamic import of GSAP for client-side only
+    const initAnimation = async () => {
+      const { gsap } = await import("gsap");
+      
+      const ctx = gsap.context(() => {
+        // Page entrance animation
+        gsap.fromTo(pageRef.current,
+          { opacity: 0 },
+          { opacity: 1, duration: 0.6, ease: "power2.out" }
+        );
+      }, pageRef);
 
-    return () => ctx.revert();
+      return () => ctx.revert();
+    };
+
+    initAnimation();
   }, []);
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-4xl mb-4">⏳</div>
+          <div className="text-lg font-display font-bold uppercase tracking-tight text-black">
+            Loading Product...
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error || !product) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-4xl mb-4">❌</div>
+          <div className="text-lg font-display font-bold uppercase tracking-tight text-black mb-2">
+            Product Not Found
+          </div>
+          <div className="text-sm text-brand-accent font-bold">
+            {error || 'The product you are looking for does not exist.'}
+          </div>
+          <a 
+            href="/products" 
+            className="inline-block mt-4 px-6 py-2 bg-brand-green text-black font-bold uppercase tracking-wider hover:bg-brand-accent transition-colors duration-200"
+          >
+            Back to Products
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  // Convert product images to the format expected by ImageGallery
+  const galleryImages = product.images.map(img => img.original || img.medium || img.thumbnail);
 
   return (
     <div ref={pageRef} className="min-h-screen bg-white">
@@ -125,7 +144,7 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
               Products
             </a>
             <span className="text-brand-accent">/</span>
-            <span className="text-black font-bold">{mockProduct.name}</span>
+            <span className="text-black font-bold">{product.name}</span>
           </div>
         </nav>
 
@@ -134,14 +153,14 @@ export default function ProductDetailPage({ params }: ProductDetailPageProps) {
           {/* Image Gallery */}
           <div className="order-2 lg:order-1">
             <ImageGallery 
-              images={mockProduct.images} 
-              productName={mockProduct.name}
+              images={galleryImages} 
+              productName={product.name}
             />
           </div>
 
           {/* Product Info */}
           <div className="order-1 lg:order-2">
-            <ProductInfo product={mockProduct} />
+            <ProductInfo product={product} />
           </div>
         </div>
 

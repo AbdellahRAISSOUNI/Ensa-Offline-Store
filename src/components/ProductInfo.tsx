@@ -1,17 +1,20 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import { gsap } from "gsap";
 import Link from "next/link";
 
 interface ProductInfoProps {
   product: {
-    id: string;
+    _id?: string;
+    id?: string;
     name: string;
     price: number;
     description?: string;
     sizes: string[];
     isCustomizable: boolean;
     customPrice?: number;
+    category?: string;
+    stock?: number;
+    tags?: string[];
   };
 }
 
@@ -47,54 +50,64 @@ export function ProductInfo({ product }: ProductInfoProps) {
   useEffect(() => {
     if (!infoRef.current) return;
 
-    const ctx = gsap.context(() => {
-      // Info section entrance
-      gsap.fromTo(infoRef.current,
-        { opacity: 0, x: 30 },
-        { opacity: 1, x: 0, duration: 0.8, ease: "power2.out", delay: 0.2 }
-      );
+    const initAnimation = async () => {
+      const { gsap } = await import("gsap");
+      
+      const ctx = gsap.context(() => {
+        // Info section entrance
+        gsap.fromTo(infoRef.current,
+          { opacity: 0, x: 30 },
+          { opacity: 1, x: 0, duration: 0.8, ease: "power2.out", delay: 0.2 }
+        );
 
-      // Form elements stagger
-      const formElements = formRef.current?.querySelectorAll(".form-element");
-      gsap.fromTo(formElements,
-        { opacity: 0, y: 20 },
-        { 
-          opacity: 1, 
-          y: 0, 
-          duration: 0.5, 
-          ease: "power2.out",
-          stagger: 0.1,
-          delay: 0.5
-        }
-      );
-    }, infoRef);
+        // Form elements stagger
+        const formElements = formRef.current?.querySelectorAll(".form-element");
+        gsap.fromTo(formElements,
+          { opacity: 0, y: 20 },
+          { 
+            opacity: 1, 
+            y: 0, 
+            duration: 0.5, 
+            ease: "power2.out",
+            stagger: 0.1,
+            delay: 0.5
+          }
+        );
+      }, infoRef);
 
-    return () => ctx.revert();
+      return () => ctx.revert();
+    };
+
+    initAnimation();
   }, []);
 
-  const handleSizeSelect = (size: string) => {
+  const handleSizeSelect = async (size: string) => {
     setSelectedSize(size);
     
     // Animate size selection
     const sizeButtons = formRef.current?.querySelectorAll(".size-btn");
-    sizeButtons?.forEach((btn) => {
-      const isSelected = btn.getAttribute("data-size") === size;
-      gsap.to(btn, {
-        backgroundColor: isSelected ? "#8BC34A" : "#FFFFFF",
-        color: isSelected ? "#000000" : "#000000",
-        scale: isSelected ? 1.05 : 1,
-        duration: 0.3,
-        ease: "power2.out"
+    if (sizeButtons?.length) {
+      const { gsap } = await import("gsap");
+      sizeButtons.forEach((btn) => {
+        const isSelected = btn.getAttribute("data-size") === size;
+        gsap.to(btn, {
+          backgroundColor: isSelected ? "#8BC34A" : "#FFFFFF",
+          color: isSelected ? "#000000" : "#000000",
+          scale: isSelected ? 1.05 : 1,
+          duration: 0.3,
+          ease: "power2.out"
+        });
       });
-    });
+    }
   };
 
-  const handleCustomToggle = () => {
+  const handleCustomToggle = async () => {
     setIsCustom(!isCustom);
     
     // Animate custom toggle
     const customSection = formRef.current?.querySelector(".custom-section");
     if (customSection) {
+      const { gsap } = await import("gsap");
       gsap.to(customSection, {
         height: !isCustom ? "auto" : 0,
         opacity: !isCustom ? 1 : 0,
@@ -104,25 +117,29 @@ export function ProductInfo({ product }: ProductInfoProps) {
     }
   };
 
-  const handleCitySelect = (city: typeof cities[0]) => {
+  const handleCitySelect = async (city: typeof cities[0]) => {
     setSelectedCity(city.name);
     setShippingFee(city.fee);
     
     // Animate city selection
     const cityButtons = formRef.current?.querySelectorAll(".city-btn");
-    cityButtons?.forEach((btn) => {
-      const isSelected = btn.getAttribute("data-city") === city.name;
-      gsap.to(btn, {
-        backgroundColor: isSelected ? "#8BC34A" : "#FFFFFF",
-        color: isSelected ? "#000000" : "#000000",
-        scale: isSelected ? 1.02 : 1,
-        duration: 0.3,
-        ease: "power2.out"
+    if (cityButtons?.length) {
+      const { gsap } = await import("gsap");
+      cityButtons.forEach((btn) => {
+        const isSelected = btn.getAttribute("data-city") === city.name;
+        gsap.to(btn, {
+          backgroundColor: isSelected ? "#8BC34A" : "#FFFFFF",
+          color: isSelected ? "#000000" : "#000000",
+          scale: isSelected ? 1.02 : 1,
+          duration: 0.3,
+          ease: "power2.out"
+        });
       });
-    });
+    }
 
     // Animate price update
     if (priceRef.current) {
+      const { gsap } = await import("gsap");
       gsap.to(priceRef.current, {
         scale: 1.05,
         duration: 0.2,
@@ -139,52 +156,65 @@ export function ProductInfo({ product }: ProductInfoProps) {
     if (!selectedSize) {
       // Animate error state
       const sizeSection = formRef.current?.querySelector(".size-section");
-      gsap.to(sizeSection, {
-        x: -10,
-        duration: 0.1,
-        ease: "power2.out",
-        yoyo: true,
-        repeat: 2
-      });
+      if (sizeSection) {
+        import("gsap").then(({ gsap }) => {
+          gsap.to(sizeSection, {
+            x: -10,
+            duration: 0.1,
+            ease: "power2.out",
+            yoyo: true,
+            repeat: 2
+          });
+        });
+      }
       return;
     }
 
     if (!selectedCity) {
       // Animate error state
       const citySection = formRef.current?.querySelector(".city-section");
-      gsap.to(citySection, {
-        x: -10,
-        duration: 0.1,
-        ease: "power2.out",
-        yoyo: true,
-        repeat: 2
-      });
+      if (citySection) {
+        import("gsap").then(({ gsap }) => {
+          gsap.to(citySection, {
+            x: -10,
+            duration: 0.1,
+            ease: "power2.out",
+            yoyo: true,
+            repeat: 2
+          });
+        });
+      }
       return;
     }
 
     // Success animation
     const button = e.currentTarget.querySelector("button[type='submit']");
-    gsap.to(button, {
-      scale: 0.95,
-      duration: 0.1,
-      ease: "power2.out",
-      yoyo: true,
-      repeat: 1,
-      onComplete: () => {
-        // Here you would typically add to cart logic
-        console.log("Added to cart:", {
-          product: product.name,
-          size: selectedSize,
-          customText: isCustom ? customText : null,
-          city: selectedCity,
-          totalPrice: calculateTotalPrice()
+    if (button) {
+      import("gsap").then(({ gsap }) => {
+        gsap.to(button, {
+          scale: 0.95,
+          duration: 0.1,
+          ease: "power2.out",
+          yoyo: true,
+          repeat: 1,
+          onComplete: () => {
+            // Here you would typically add to cart logic
+            console.log("Added to cart:", {
+              product: product.name,
+              size: selectedSize,
+              customText: isCustom ? customText : null,
+              city: selectedCity,
+              totalPrice: calculateTotalPrice()
+            });
+          }
         });
-      }
-    });
+      });
+    }
   };
 
-  const handleFieldFocus = (fieldRef: React.RefObject<HTMLInputElement>) => {
+  const handleFieldFocus = async (fieldRef: React.RefObject<HTMLInputElement>) => {
     if (fieldRef.current) {
+      const { gsap } = await import("gsap");
       gsap.to(fieldRef.current, {
         scale: 1.02,
         duration: 0.2,
@@ -193,8 +223,9 @@ export function ProductInfo({ product }: ProductInfoProps) {
     }
   };
 
-  const handleFieldBlur = (fieldRef: React.RefObject<HTMLInputElement>) => {
+  const handleFieldBlur = async (fieldRef: React.RefObject<HTMLInputElement>) => {
     if (fieldRef.current) {
+      const { gsap } = await import("gsap");
       gsap.to(fieldRef.current, {
         scale: 1,
         duration: 0.2,
@@ -333,7 +364,10 @@ export function ProductInfo({ product }: ProductInfoProps) {
         {/* Action Buttons */}
         <div className="form-element">
           <div className="flex gap-2">
-            <Link href={`/order/${product.id}`} className="flex-1">
+            <Link 
+              href={`/order/${product._id || product.id}?size=${selectedSize}&city=${selectedCity}&custom=${isCustom ? 'true' : 'false'}${isCustom && customText ? `&customText=${encodeURIComponent(customText)}` : ''}`} 
+              className="flex-1"
+            >
               <button
                 type="button"
                 className="w-full bg-brand-green text-black border-6 shadow-brutalLg hover:shadow-brutalMd transition-all duration-300 font-display font-bold text-lg uppercase tracking-wider py-4 px-6"
@@ -342,14 +376,6 @@ export function ProductInfo({ product }: ProductInfoProps) {
               </button>
             </Link>
             
-            {product.isCustomizable && (
-              <button
-                type="button"
-                className="flex-1 bg-black text-white border-6 shadow-brutalLg hover:shadow-brutalMd transition-all duration-300 font-display font-bold text-lg uppercase tracking-wider py-4 px-6"
-              >
-                Customize
-              </button>
-            )}
           </div>
         </div>
       </form>
