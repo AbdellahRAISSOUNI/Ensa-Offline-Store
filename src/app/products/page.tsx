@@ -21,8 +21,6 @@ interface Product {
   isActive: boolean;
   stock?: number;
   tags?: string[];
-  createdAt: string;
-  updatedAt: string;
 }
 
 export default function ProductsPage() {

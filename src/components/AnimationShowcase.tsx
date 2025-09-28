@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { useGSAP } from '../hooks/useGSAP';
+import { useGSAP, usePageTransition } from '../hooks/useGSAP';
 import { useParallax } from '../lib/parallax-system';
 import { PREMIUM_ANIMATIONS } from '../lib/animation-presets';
 import { usePerformanceMonitoring, useDeviceCapabilities } from '../lib/performance-utils';
@@ -20,25 +20,25 @@ export const AnimationShowcase: React.FC = () => {
     // Title reveal with brutalist effect
     const title = heroRef.current.querySelector('.hero-title');
     if (title) {
-      tl.add(PREMIUM_ANIMATIONS.hero.titleReveal(title));
+      PREMIUM_ANIMATIONS.hero.titleReveal(title);
     }
 
     // Subtitle reveal
     const subtitle = heroRef.current.querySelector('.hero-subtitle');
     if (subtitle) {
-      tl.add(PREMIUM_ANIMATIONS.hero.subtitleReveal(subtitle), '-=0.5');
+      PREMIUM_ANIMATIONS.hero.subtitleReveal(subtitle);
     }
 
     // CTA button reveal
     const cta = heroRef.current.querySelector('.hero-cta');
     if (cta) {
-      tl.add(PREMIUM_ANIMATIONS.hero.ctaReveal(cta), '-=0.3');
+      PREMIUM_ANIMATIONS.hero.ctaReveal(cta);
     }
 
     // Background reveal
     const background = heroRef.current.querySelector('.hero-background');
     if (background) {
-      tl.add(PREMIUM_ANIMATIONS.hero.backgroundReveal(background), 0);
+      PREMIUM_ANIMATIONS.hero.backgroundReveal(background);
     }
   }, []);
 
@@ -49,7 +49,7 @@ export const AnimationShowcase: React.FC = () => {
     const cards = cardsRef.current.querySelectorAll('.product-card');
     
     cards.forEach((card, index) => {
-      tl.add(PREMIUM_ANIMATIONS.productCard.cardEnter(card), index * 0.1);
+      PREMIUM_ANIMATIONS.productCard.cardEnter(card);
     });
   }, []);
 
@@ -60,7 +60,7 @@ export const AnimationShowcase: React.FC = () => {
     const textElements = textRef.current.querySelectorAll('.text-element');
     
     textElements.forEach((element, index) => {
-      tl.add(PREMIUM_ANIMATIONS.text.splitTextReveal([element]), index * 0.05);
+      PREMIUM_ANIMATIONS.text.splitTextReveal([element]);
     });
   }, []);
 
