@@ -55,19 +55,19 @@ export default function AnalyticsTab() {
         const products = productsData.data.products;
 
         // Calculate analytics
-        const totalRevenue = orders.reduce((sum: number, order: any) => sum + order.pricing.totalPrice, 0);
+        const totalRevenue = orders.reduce((sum: number, order: any) => sum + (order?.pricing?.totalPrice || 0), 0);
         const totalOrders = orders.length;
         const averageOrderValue = totalOrders > 0 ? totalRevenue / totalOrders : 0;
         
         // Custom orders percentage
-        const customOrders = orders.filter((order: any) => order.productDetails.isCustom);
+        const customOrders = orders.filter((order: any) => order?.productDetails?.isCustom);
         const customOrdersPercentage = totalOrders > 0 ? (customOrders.length / totalOrders) * 100 : 0;
 
         // Top products
         const productStats = new Map();
         orders.forEach((order: any) => {
-          const productId = order.productDetails.productId._id || order.productDetails.productId;
-          const productName = order.productDetails.productId.name || 'Unknown Product';
+          const productId = order?.productDetails?.productId?._id || order?.productDetails?.productId || 'unknown';
+          const productName = order?.productDetails?.productId?.name || 'Unknown Product';
           
           if (!productStats.has(productId)) {
             productStats.set(productId, {
@@ -80,7 +80,7 @@ export default function AnalyticsTab() {
           
           const stats = productStats.get(productId);
           stats.orderCount += 1;
-          stats.revenue += order.pricing.totalPrice;
+          stats.revenue += (order?.pricing?.totalPrice || 0);
         });
 
         const topProducts = Array.from(productStats.values())
@@ -90,7 +90,7 @@ export default function AnalyticsTab() {
         // Orders by status
         const statusStats = new Map();
         orders.forEach((order: any) => {
-          const status = order.status;
+          const status = order?.status || 'unknown';
           statusStats.set(status, (statusStats.get(status) || 0) + 1);
         });
 
@@ -102,21 +102,29 @@ export default function AnalyticsTab() {
         // Orders by city
         const cityStats = new Map();
         orders.forEach((order: any) => {
-          const city = order.customerInfo.city;
+          const city = order?.customerInfo?.city || 'Unknown';
           if (!cityStats.has(city)) {
             cityStats.set(city, { city, count: 0, revenue: 0 });
           }
           const stats = cityStats.get(city);
           stats.count += 1;
-          stats.revenue += order.pricing.totalPrice;
+          stats.revenue += (order?.pricing?.totalPrice || 0);
         });
 
         const ordersByCity = Array.from(cityStats.values())
           .sort((a, b) => b.revenue - a.revenue)
           .slice(0, 10);
 
-        // Recent orders growth (mock calculation)
-        const recentOrdersGrowth = Math.random() * 20 - 10; // Random growth between -10% and +10%
+        // Recent orders growth (last 7 days vs previous 7 days)
+        const now = new Date();
+        const daysAgo = (n: number) => new Date(now.getTime() - n * 24 * 60 * 60 * 1000);
+        const last7 = orders.filter((o: any) => new Date(o.createdAt) >= daysAgo(7));
+        const prev7 = orders.filter((o: any) => new Date(o.createdAt) >= daysAgo(14) && new Date(o.createdAt) < daysAgo(7));
+        const last7Revenue = last7.reduce((s: number, o: any) => s + (o?.pricing?.totalPrice || 0), 0);
+        const prev7Revenue = prev7.reduce((s: number, o: any) => s + (o?.pricing?.totalPrice || 0), 0);
+        const recentOrdersGrowth = prev7Revenue === 0
+          ? (last7Revenue > 0 ? 100 : 0)
+          : ((last7Revenue - prev7Revenue) / prev7Revenue) * 100;
 
         setAnalytics({
           totalRevenue,
@@ -206,7 +214,7 @@ export default function AnalyticsTab() {
           <div className="text-3xl font-bold text-black mb-2">${analytics.totalRevenue.toFixed(2)}</div>
           <div className="text-sm text-brand-accent font-bold uppercase tracking-wider">Total Revenue</div>
           <div className={`text-xs mt-2 font-bold ${analytics.recentOrdersGrowth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-            {analytics.recentOrdersGrowth >= 0 ? '↗' : '↘'} {Math.abs(analytics.recentOrdersGrowth).toFixed(1)}%
+            {analytics.recentOrdersGrowth >= 0 ? '↗' : '↘'} {Math.abs(analytics.recentOrdersGrowth).toFixed(1)}% (7d)
           </div>
         </div>
         
@@ -232,7 +240,7 @@ export default function AnalyticsTab() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Top Products */}
         <div className="bg-white border-6 border-black shadow-brutal p-6">
           <h3 className="text-xl font-display font-bold uppercase tracking-tight text-black mb-6">
@@ -291,6 +299,21 @@ export default function AnalyticsTab() {
               ))}
             </div>
           )}
+        </div>
+
+        {/* Size Distribution */}
+        <div className="bg-white border-6 border-black shadow-brutal p-6">
+          <h3 className="text-xl font-display font-bold uppercase tracking-tight text-black mb-6">
+            Sizes Breakdown
+          </h3>
+          {/* Simple size breakdown computed client-side */}
+          {(() => {
+            const sizeMap = new Map<string, number>();
+            // @ts-ignore - we have access to orders via closure above; if not, can fetch again
+            // Fallback: derive from topProducts is not enough; compute lazily when needed
+            return null;
+          })()}
+          <div className="text-sm text-gray-500">Coming soon</div>
         </div>
       </div>
 

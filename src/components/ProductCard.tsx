@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import Link from "next/link";
+import { SecretTextVault } from "./SecretTextVault";
 
 interface ProductImage {
   original: string;
@@ -34,6 +35,7 @@ export function ProductCard({ product, index }: ProductCardProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [showSecretVault, setShowSecretVault] = useState(false);
 
   useEffect(() => {
     if (!cardRef.current) return;
@@ -141,6 +143,11 @@ export function ProductCard({ product, index }: ProductCardProps) {
   // Get the current image for display
   const currentImage = product.images[currentImageIndex];
   const displayImage = currentImage?.medium || currentImage?.original || '';
+
+  const handleSecretVaultTextSelect = (text: string) => {
+    // Navigate to product page with pre-filled custom text
+    window.location.href = `/product/${product._id}?custom=true&customText=${encodeURIComponent(text)}`;
+  };
 
   return (
     <div
@@ -286,11 +293,15 @@ export function ProductCard({ product, index }: ProductCardProps) {
           
           {product.isCustomizable && (
             <button
-              data-action="customize"
-              onClick={() => handleButtonClick('customize')}
-              className="flex-1 bg-black text-white border-3 shadow-brutal hover:shadow-brutalMd transition-all duration-200 font-display font-bold text-sm uppercase tracking-wider py-2 px-3"
+              data-action="secret-vault"
+              onClick={() => {
+                handleButtonClick('secret-vault');
+                setShowSecretVault(true);
+              }}
+              className="flex-1 bg-black text-white border-3 shadow-brutal hover:shadow-brutalMd transition-all duration-200 font-display font-bold text-sm uppercase tracking-wider py-2 px-3 relative overflow-hidden group"
             >
-              Customize
+              <span className="relative z-10">🔐 Secret</span>
+              <div className="absolute inset-0 bg-brand-green transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></div>
             </button>
           )}
         </div>
@@ -302,6 +313,14 @@ export function ProductCard({ product, index }: ProductCardProps) {
           <div className="absolute top-2 right-2 w-2 h-2 bg-brand-green animate-pulse"></div>
           <div className="absolute bottom-2 left-2 w-1 h-1 bg-black animate-pulse delay-1000"></div>
         </div>
+      )}
+
+      {/* Secret Text Vault Modal */}
+      {showSecretVault && (
+        <SecretTextVault
+          onTextSelect={handleSecretVaultTextSelect}
+          onClose={() => setShowSecretVault(false)}
+        />
       )}
     </div>
   );

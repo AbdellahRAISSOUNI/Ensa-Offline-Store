@@ -413,10 +413,14 @@ export function Hero() {
                 className="w-full h-full object-cover filter grayscale hover:grayscale-0 transition-all duration-500"
               />
               
-              {/* Enhanced play button overlay */}
+              {/* Enhanced play button overlay - circular with subtle pulse */}
               <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-60 group hover:bg-opacity-40 transition-all duration-300 cursor-pointer">
-                <div className="w-28 h-28 sm:w-36 sm:h-36 bg-brand-green border-6 shadow-brutalLg flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300">
-                  <div className="w-0 h-0 border-l-10 sm:border-l-14 border-l-black border-y-8 sm:border-y-10 border-y-transparent ml-2"></div>
+                <div className="relative w-28 h-28 sm:w-36 sm:h-36 rounded-full bg-brand-green border-6 shadow-brutalLg flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300">
+                  {/* pulse rings */}
+                  <div className="absolute inset-0 rounded-full border-4 border-black/40 animate-ping"></div>
+                  <div className="absolute inset-0 rounded-full border-4 border-brand-green/60 animate-pulse"></div>
+                  {/* play triangle */}
+                  <div className="relative w-0 h-0 border-l-10 sm:border-l-14 border-l-black border-y-8 sm:border-y-10 border-y-transparent ml-2"></div>
                 </div>
               </div>
               

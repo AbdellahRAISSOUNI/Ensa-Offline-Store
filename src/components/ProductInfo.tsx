@@ -47,6 +47,21 @@ export function ProductInfo({ product }: ProductInfoProps) {
     return total;
   };
 
+  // Handle URL parameters for pre-filled values
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const custom = urlParams.get('custom');
+    const customTextParam = urlParams.get('customText');
+    
+    if (custom === 'true' && product.isCustomizable) {
+      setIsCustom(true);
+    }
+    
+    if (customTextParam) {
+      setCustomText(decodeURIComponent(customTextParam));
+    }
+  }, [product.isCustomizable]);
+
   useEffect(() => {
     if (!infoRef.current) return;
 

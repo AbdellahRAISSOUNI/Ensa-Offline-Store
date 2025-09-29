@@ -385,7 +385,7 @@ export default function OrdersTab() {
         `"${order.customerInfo.fullName}"`,
         order.customerInfo.whatsappNumber,
         order.customerInfo.city,
-        `"${order.productDetails.productId.name}"`,
+        `"${order.productDetails?.productId?.name || 'Unknown Product'}"`,
         order.productDetails.size || 'N/A',
         order.productDetails.customText ? `"${order.productDetails.customText}"` : 'N/A',
         statusInfo.label,
@@ -636,7 +636,7 @@ export default function OrdersTab() {
                             <td>${order.customerInfo.fullName}</td>
                             <td>${order.customerInfo.whatsappNumber}</td>
                             <td>${order.customerInfo.city}</td>
-                            <td>${order.productDetails.productId.name}</td>
+                            <td>${order.productDetails?.productId?.name || 'Unknown Product'}</td>
                             <td>${order.productDetails.size || 'N/A'}</td>
                             <td>${order.productDetails.customText || 'N/A'}</td>
                             <td><span class="status-badge status-${order.status}">${statusInfo.label}</span></td>
@@ -693,7 +693,7 @@ export default function OrdersTab() {
   // Helper function to create order title
   const getOrderTitle = (order: Order) => {
     const customerName = order.customerInfo.fullName;
-    const productName = order.productDetails.productId.name;
+    const productName = order.productDetails?.productId?.name || 'Unknown Product';
     const title = `${customerName} - ${productName}`;
     return truncateText(title, 40);
   };
@@ -818,7 +818,7 @@ export default function OrdersTab() {
     order.orderId.toLowerCase().includes(searchTerm.toLowerCase()) ||
     order.customerInfo.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
     order.customerInfo.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    order.productDetails.productId.name.toLowerCase().includes(searchTerm.toLowerCase())
+    (order.productDetails?.productId?.name || '').toLowerCase().includes(searchTerm.toLowerCase())
     ).filter(order => filterStatus === '' || order.status === filterStatus)
   );
 
@@ -1068,7 +1068,7 @@ export default function OrdersTab() {
                   <div className="flex items-center gap-3">
                     <CategoryIcon className="w-4 h-4 text-gray-500" />
                     <div>
-                      <p className="font-bold text-black">{order.productDetails.productId.name}</p>
+                      <p className="font-bold text-black">{order.productDetails?.productId?.name || 'Unknown Product'}</p>
                       <div className="flex items-center gap-4 text-sm text-gray-600">
                   {order.productDetails.size && (
                           <span>Size: {order.productDetails.size}</span>
@@ -1161,7 +1161,7 @@ export default function OrdersTab() {
                         <div className="flex items-center gap-2">
                           <CategoryIcon className="w-4 h-4 text-gray-500" />
                           <div>
-                            <div className="font-bold text-black">{order.productDetails.productId.name}</div>
+                            <div className="font-bold text-black">{order.productDetails?.productId?.name || 'Unknown Product'}</div>
                             {order.productDetails.isCustom && (
                               <div className="text-sm text-gray-500 flex items-center gap-1">
                                 <Zap className="w-3 h-3" />
@@ -1368,7 +1368,7 @@ export default function OrdersTab() {
                 <div className="space-y-4">
                   <h3 className="text-lg font-bold text-black border-b-3 border-black pb-2">Product Details</h3>
                   <div className="space-y-2">
-                    <div><strong>Product:</strong> {selectedOrder.productDetails.productId.name}</div>
+                    <div><strong>Product:</strong> {selectedOrder.productDetails?.productId?.name || 'Unknown Product'}</div>
                     {selectedOrder.productDetails.size && (
                       <div><strong>Size:</strong> {selectedOrder.productDetails.size}</div>
                     )}
@@ -1435,7 +1435,7 @@ export default function OrdersTab() {
                  <div className="space-y-2 text-sm">
                    <div><strong>Order ID:</strong> {deleteConfirm.order.orderId}</div>
                    <div><strong>Customer:</strong> {deleteConfirm.order.customerInfo.fullName}</div>
-                   <div><strong>Product:</strong> {deleteConfirm.order.productDetails.productId.name}</div>
+                   <div><strong>Product:</strong> {deleteConfirm.order.productDetails?.productId?.name || 'Unknown Product'}</div>
                    <div><strong>Total:</strong> ${deleteConfirm.order.pricing.totalPrice.toFixed(2)}</div>
                  </div>
                </div>

@@ -1,6 +1,7 @@
 import { connectToDatabase } from '@/lib/mongodb';
 import { Product } from '@/models/Product';
 import { Settings } from '@/models/Settings';
+import { CommunityText } from '@/models/CommunityText';
 
 // Sample product data
 const sampleProducts = [
@@ -193,6 +194,80 @@ const sampleSettings = {
   },
 };
 
+// Sample community texts
+const sampleCommunityTexts = [
+  {
+    text: "Stay Offline, Stay Real",
+    category: "motivational",
+    isApproved: true,
+    submittedBy: "anon_seed_001",
+    usageCount: 15
+  },
+  {
+    text: "Digital Detox Mode",
+    category: "minimalist",
+    isApproved: true,
+    submittedBy: "anon_seed_002",
+    usageCount: 8
+  },
+  {
+    text: "Chaos is my Comfort Zone",
+    category: "chaotic",
+    isApproved: true,
+    submittedBy: "anon_seed_003",
+    usageCount: 12
+  },
+  {
+    text: "404: Social Life Not Found",
+    category: "funny",
+    isApproved: true,
+    submittedBy: "anon_seed_004",
+    usageCount: 23
+  },
+  {
+    text: "Existence Precedes Essence",
+    category: "philosophical",
+    isApproved: true,
+    submittedBy: "anon_seed_005",
+    usageCount: 6
+  },
+  {
+    text: "Disconnect to Reconnect",
+    category: "motivational",
+    isApproved: true,
+    submittedBy: "anon_seed_006",
+    usageCount: 10
+  },
+  {
+    text: "Less Screen More Life",
+    category: "minimalist",
+    isApproved: true,
+    submittedBy: "anon_seed_007",
+    usageCount: 18
+  },
+  {
+    text: "Embrace the Glitch",
+    category: "chaotic",
+    isApproved: true,
+    submittedBy: "anon_seed_008",
+    usageCount: 9
+  },
+  {
+    text: "Powered by Coffee & Dreams",
+    category: "funny",
+    isApproved: true,
+    submittedBy: "anon_seed_009",
+    usageCount: 21
+  },
+  {
+    text: "Be the Change You Code",
+    category: "philosophical",
+    isApproved: true,
+    submittedBy: "anon_seed_010",
+    usageCount: 7
+  }
+];
+
 // Database seeder function
 export async function seedDatabase() {
   try {
@@ -204,6 +279,7 @@ export async function seedDatabase() {
     // Clear existing data
     await Product.deleteMany({});
     await Settings.deleteMany({});
+    await CommunityText.deleteMany({});
     console.log('🗑️ Cleared existing data');
 
     // Insert sample products
@@ -214,11 +290,16 @@ export async function seedDatabase() {
     const settings = await Settings.create(sampleSettings);
     console.log('✅ Inserted settings');
 
+    // Insert sample community texts
+    const communityTexts = await CommunityText.insertMany(sampleCommunityTexts);
+    console.log(`✅ Inserted ${communityTexts.length} community texts`);
+
     console.log('🎉 Database seeding completed successfully!');
     
     return {
       products: products.length,
       settings: 1,
+      communityTexts: communityTexts.length,
     };
   } catch (error) {
     console.error('❌ Error seeding database:', error);

@@ -14,6 +14,7 @@ import {
   ChevronLeft,
   ChevronRight
 } from "lucide-react";
+import AdminBottomNav from "@/components/admin/AdminBottomNav";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -39,10 +40,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
-       {/* Sidebar */}
-       <div className={`bg-black text-white transition-all duration-300 ${
+       {/* Sidebar (hidden on small screens) */}
+       <div className={`hidden md:flex bg-black text-white transition-all duration-300 ${
          sidebarCollapsed ? 'w-20' : 'w-64'
-       } flex flex-col fixed h-screen z-10 shadow-2xl`}>
+       } flex-col fixed h-screen z-10 shadow-2xl`}>
          {/* Header */}
          <div className="p-4 border-b border-gray-700">
            <div className={`flex items-center ${sidebarCollapsed ? 'flex-col space-y-3' : 'justify-between'}`}>
@@ -133,8 +134,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
 
        {/* Main Content */}
        <div className={`flex-1 flex flex-col transition-all duration-300 ${
-         sidebarCollapsed ? 'ml-20' : 'ml-64'
-       }`}>
+         sidebarCollapsed ? 'md:ml-20' : 'md:ml-64'
+       } pb-14 md:pb-0`}>
         {/* Top Bar */}
         <header className="bg-white border-b-6 border-black shadow-brutal">
           <div className="px-6 py-4">
@@ -161,10 +162,12 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-4 md:p-6">
           {children}
         </main>
       </div>
+      {/* Bottom Nav (mobile only) */}
+      <AdminBottomNav />
     </div>
   );
 }
