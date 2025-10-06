@@ -101,14 +101,14 @@ export default function ProductsTab() {
       formData.append('image', file);
 
       // Pre-validate client-side to fail fast on hosts with strict limits
-      const maxBytes = 4 * 1024 * 1024; // keep in sync with API
+      const maxBytes = 15 * 1024 * 1024; // keep in sync with API
       const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
       if (!allowedTypes.includes(file.type)) {
         showNotification('error', 'Invalid file type. Use JPG, PNG, WEBP, or GIF.');
         return null;
       }
       if (file.size > maxBytes) {
-        showNotification('error', 'File too large. Max 4MB.');
+        showNotification('error', 'File too large. Max 15MB.');
         return null;
       }
 

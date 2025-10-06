@@ -33,7 +33,7 @@ if (isCloudinaryConfigured) {
 }
 
 // Image upload configuration
-const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB to accommodate common serverless limits
+const MAX_FILE_SIZE = 15 * 1024 * 1024; // 15MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
 // Upload to Cloudinary and create multiple sizes
