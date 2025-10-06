@@ -100,12 +100,41 @@ export default function ProductsTab() {
       const formData = new FormData();
       formData.append('image', file);
 
+      // Pre-validate client-side to fail fast on hosts with strict limits
+      const maxBytes = 4 * 1024 * 1024; // keep in sync with API
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+      if (!allowedTypes.includes(file.type)) {
+        showNotification('error', 'Invalid file type. Use JPG, PNG, WEBP, or GIF.');
+        return null;
+      }
+      if (file.size > maxBytes) {
+        showNotification('error', 'File too large. Max 4MB.');
+        return null;
+      }
+
       const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
       });
 
-      const result = await response.json();
+      // Some hosting providers return HTML/plaintext error pages on 4xx/5xx.
+      // Guard JSON parsing to avoid "Unexpected token" errors.
+      const contentType = response.headers.get('content-type') || '';
+      let result: any = null;
+      if (contentType.includes('application/json')) {
+        result = await response.json();
+      } else {
+        const text = await response.text();
+        if (!response.ok) {
+          throw new Error(text || `Upload failed with status ${response.status}`);
+        }
+        // Fallback minimal shape if server responded 2xx but not JSON
+        try {
+          result = JSON.parse(text);
+        } catch {
+          throw new Error('Unexpected non-JSON response from server');
+        }
+      }
       
       if (result.success) {
         return result.data.images;

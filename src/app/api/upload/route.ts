@@ -4,6 +4,8 @@ import { requireAuth, createResponse, createErrorResponse } from '@/lib/api-util
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic';
+// Ensure Node.js runtime (required for Buffer and multipart handling in some hosts)
+export const runtime = 'nodejs';
 
 // Configure Cloudinary - Using hardcoded values for testing
 const cloudinaryConfig = {
@@ -31,7 +33,7 @@ if (isCloudinaryConfigured) {
 }
 
 // Image upload configuration
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_FILE_SIZE = 4 * 1024 * 1024; // 4MB to accommodate common serverless limits
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
 // Upload to Cloudinary and create multiple sizes
@@ -103,8 +105,8 @@ export async function POST(request: NextRequest) {
     if (file.size > MAX_FILE_SIZE) {
       return createErrorResponse(
         `File too large. Maximum size: ${MAX_FILE_SIZE / 1024 / 1024}MB`,
-        400,
-        'Bad Request'
+        413,
+        'Request Entity Too Large'
       );
     }
 
