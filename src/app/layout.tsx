@@ -29,12 +29,14 @@ export const metadata: Metadata = {
     description: "Where street culture meets premium apparel. Laugh, grow, and express your authentic self with our exclusive ENSA OFFLINE collection.",
     type: "website",
     siteName: "ENSA OFFLINE",
+    url: "https://www.ensa-offline.store",
     images: [
       {
-        url: "/ensa-offline.png",
+        url: "/ensa-offline.png?v=1",
         width: 1200,
         height: 630,
         alt: "ENSA OFFLINE - Laugh and Grow",
+        type: "image/png",
       },
     ],
   },
@@ -42,7 +44,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "ENSA OFFLINE STORE",
     description: "Where street culture meets premium apparel. Laugh, grow, and express your authentic self with our exclusive ENSA OFFLINE collection.",
-    images: ["/ensa-offline.png"],
+    images: ["/ensa-offline.png?v=1"],
   },
   keywords: ["ENSA OFFLINE", "streetwear", "premium apparel", "authentic style", "urban fashion", "limited edition"],
   authors: [{ name: "ENSA OFFLINE" }],
@@ -57,6 +59,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        {/* Additional meta tags for better WhatsApp/messaging app compatibility */}
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:type" content="image/png" />
+        <meta name="twitter:image:alt" content="ENSA OFFLINE - Laugh and Grow" />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <CurrencyProvider>
           <ConditionalLayout>{children}</ConditionalLayout>
