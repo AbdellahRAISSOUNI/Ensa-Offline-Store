@@ -59,6 +59,7 @@ export default function ProductsTab() {
   const [uploading, setUploading] = useState(false);
   const [notification, setNotification] = useState<{ type: 'success' | 'error' | 'info', message: string } | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<{ product: Product | null, show: boolean }>({ product: null, show: false });
+  const [productImageIndices, setProductImageIndices] = useState<{ [productId: string]: number }>({});
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   
@@ -93,24 +94,38 @@ export default function ProductsTab() {
     }
   };
 
-  // Upload image
-  const uploadImage = async (file: File): Promise<ProductImage | null> => {
+  // Upload images (single or multiple)
+  const uploadImages = async (files: FileList): Promise<ProductImage[]> => {
     try {
       setUploading(true);
       const formData = new FormData();
-      formData.append('image', file);
 
       // Pre-validate client-side to fail fast on hosts with strict limits
       const maxBytes = 15 * 1024 * 1024; // keep in sync with API
       const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-      if (!allowedTypes.includes(file.type)) {
-        showNotification('error', 'Invalid file type. Use JPG, PNG, WEBP, or GIF.');
-        return null;
+      
+      const validFiles: File[] = [];
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (!allowedTypes.includes(file.type)) {
+          showNotification('error', `Invalid file type for ${file.name}. Use JPG, PNG, WEBP, or GIF.`);
+          continue;
+        }
+        if (file.size > maxBytes) {
+          showNotification('error', `File ${file.name} is too large. Max 15MB.`);
+          continue;
+        }
+        validFiles.push(file);
       }
-      if (file.size > maxBytes) {
-        showNotification('error', 'File too large. Max 15MB.');
-        return null;
+
+      if (validFiles.length === 0) {
+        return [];
       }
+
+      // Add all valid files to form data
+      validFiles.forEach(file => {
+        formData.append('images', file);
+      });
 
       const response = await fetch('/api/upload', {
         method: 'POST',
@@ -137,14 +152,17 @@ export default function ProductsTab() {
       }
       
       if (result.success) {
-        return result.data.images;
+        // Flatten array of arrays into single array
+        const allImages = result.data.images.flat();
+        showNotification('success', `${allImages.length} image(s) uploaded successfully`);
+        return allImages;
       } else {
         throw new Error(result.message || 'Upload failed');
       }
     } catch (error) {
-      console.error('Error uploading image:', error);
-      showNotification('error', `Failed to upload image: ${error}`);
-      return null;
+      console.error('Error uploading images:', error);
+      showNotification('error', `Failed to upload images: ${error}`);
+      return [];
     } finally {
       setUploading(false);
     }
@@ -155,15 +173,17 @@ export default function ProductsTab() {
     const files = event.target.files;
     if (!files || files.length === 0) return;
 
-    const file = files[0];
-    const uploadedImage = await uploadImage(file);
+    const uploadedImages = await uploadImages(files);
     
-    if (uploadedImage) {
+    if (uploadedImages.length > 0) {
       setFormData(prev => ({
         ...prev,
-        images: [...prev.images, uploadedImage]
+        images: [...prev.images, ...uploadedImages]
       }));
     }
+    
+    // Clear the input so the same files can be selected again if needed
+    event.target.value = '';
   };
 
   // Handle form submission
@@ -239,6 +259,23 @@ export default function ProductsTab() {
   const showNotification = (type: 'success' | 'error' | 'info', message: string) => {
     setNotification({ type, message });
     setTimeout(() => setNotification(null), 4000);
+  };
+
+  // Navigation functions for product images
+  const navigateProductImage = (productId: string, direction: 'prev' | 'next', imageCount: number) => {
+    const currentIndex = productImageIndices[productId] || 0;
+    let newIndex;
+    
+    if (direction === 'next') {
+      newIndex = currentIndex === imageCount - 1 ? 0 : currentIndex + 1;
+    } else {
+      newIndex = currentIndex === 0 ? imageCount - 1 : currentIndex - 1;
+    }
+    
+    setProductImageIndices(prev => ({
+      ...prev,
+      [productId]: newIndex
+    }));
   };
 
   // Delete product
@@ -392,23 +429,73 @@ export default function ProductsTab() {
           {products.map((product) => (
             <div key={product._id} className="bg-white border-6 border-black shadow-brutal hover:shadow-brutalMd transition-all duration-200">
               {/* Product Image */}
-              <div className="aspect-square bg-gray-200 overflow-hidden border-b-6 border-black">
+              <div className="relative aspect-square bg-gray-200 overflow-hidden border-b-6 border-black group">
                 {product.images.length > 0 ? (
-                  <img
-                    src={product.images[0].medium}
-                    alt={product.name}
-                    className="w-full h-full object-cover"
-                  />
-                 ) : (
-                   <div className="w-full h-full flex items-center justify-center text-gray-500">
-                     <div className="text-center">
-                       <div className="w-12 h-12 bg-gray-100 border-2 border-gray-300 mx-auto mb-2 flex items-center justify-center rounded">
-                         <Package className="w-6 h-6 text-gray-400" />
-                       </div>
-                       <div className="text-sm">No Image</div>
-                     </div>
-                   </div>
-                 )}
+                  <>
+                    <img
+                      src={product.images[productImageIndices[product._id] || 0]?.medium || product.images[0].medium}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                    />
+                    
+                    {/* Navigation Arrows - Only show if multiple images */}
+                    {product.images.length > 1 && (
+                      <>
+                        {/* Previous Arrow */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigateProductImage(product._id, 'prev', product.images.length);
+                          }}
+                          className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-black text-white border-2 shadow-brutal hover:shadow-brutalMd transition-all duration-200 flex items-center justify-center group-hover:opacity-100 opacity-0 z-10"
+                        >
+                          <svg
+                            className="w-4 h-4 transform -translate-x-0.5"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+                          </svg>
+                        </button>
+
+                        {/* Next Arrow */}
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigateProductImage(product._id, 'next', product.images.length);
+                          }}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-brand-green text-black border-2 shadow-brutal hover:shadow-brutalMd transition-all duration-200 flex items-center justify-center group-hover:opacity-100 opacity-0 z-10"
+                        >
+                          <svg
+                            className="w-4 h-4 transform translate-x-0.5"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/>
+                          </svg>
+                        </button>
+                      </>
+                    )}
+                    
+                    {/* Image Counter */}
+                    {product.images.length > 1 && (
+                      <div className="absolute top-2 left-2 bg-black text-white px-2 py-1 text-xs font-bold uppercase tracking-wider border shadow-brutal">
+                        {(productImageIndices[product._id] || 0) + 1} / {product.images.length}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center text-gray-500">
+                    <div className="text-center">
+                      <div className="w-12 h-12 bg-gray-100 border-2 border-gray-300 mx-auto mb-2 flex items-center justify-center rounded">
+                        <Package className="w-6 h-6 text-gray-400" />
+                      </div>
+                      <div className="text-sm">No Image</div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Product Info */}
@@ -678,6 +765,7 @@ export default function ProductsTab() {
                       ref={fileInputRef}
                       type="file"
                       accept="image/*"
+                      multiple
                       onChange={handleFileUpload}
                       className="hidden"
                     />
@@ -687,7 +775,7 @@ export default function ProductsTab() {
                       disabled={uploading}
                       className="px-6 py-3 bg-brand-green text-black border-3 border-black shadow-brutal hover:shadow-brutalMd transition-all duration-200 font-bold uppercase tracking-wider rounded mb-4"
                     >
-                      {uploading ? 'Uploading...' : 'Upload Image'}
+                      {uploading ? 'Uploading...' : 'Upload Images'}
                     </button>
                     
                     {/* Image Preview */}

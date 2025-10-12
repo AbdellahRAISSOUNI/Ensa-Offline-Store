@@ -18,6 +18,15 @@ export const metadata: Metadata = {
   title: "ENSA OFFLINE",
   description: "grace under pressure",
   metadataBase: new URL("https://example.com"),
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.ico?v=2", sizes: "16x16", type: "image/x-icon" },
+      { url: "/favicon.ico?v=2", sizes: "32x32", type: "image/x-icon" },
+    ],
+    shortcut: "/favicon.ico?v=2",
+    apple: "/favicon.ico?v=2",
+  },
   openGraph: {
     title: "ENSA OFFLINE",
     description: "grace under pressure",
@@ -37,6 +46,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="icon" href="/favicon.ico?v=2" sizes="any" />
+        <link rel="shortcut icon" href="/favicon.ico?v=2" />
+        <link rel="apple-touch-icon" href="/favicon.ico?v=2" />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ConditionalLayout>{children}</ConditionalLayout>
       </body>
