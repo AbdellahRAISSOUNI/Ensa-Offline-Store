@@ -189,16 +189,6 @@ export default function AdminLoginPage() {
           </button>
         </form>
 
-        {/* Demo Credentials */}
-        <div className="mt-8 bg-black text-white p-4 border-6 shadow-brutal">
-          <h3 className="text-sm font-display font-bold uppercase tracking-tight mb-2">
-            Demo Credentials
-          </h3>
-          <div className="text-xs space-y-1">
-            <div><strong>Username:</strong> admin</div>
-            <div><strong>Password:</strong> ensa2024</div>
-          </div>
-        </div>
       </div>
     </div>
   );
