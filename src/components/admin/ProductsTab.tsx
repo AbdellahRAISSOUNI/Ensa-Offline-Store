@@ -12,6 +12,7 @@ import {
   CheckSquare,
   Palette
 } from "lucide-react";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface ProductImage {
   original: string;
@@ -60,6 +61,7 @@ export default function ProductsTab() {
   const [notification, setNotification] = useState<{ type: 'success' | 'error' | 'info', message: string } | null>(null);
   const [deleteConfirm, setDeleteConfirm] = useState<{ product: Product | null, show: boolean }>({ product: null, show: false });
   const [productImageIndices, setProductImageIndices] = useState<{ [productId: string]: number }>({});
+  const { formatPrice } = useCurrency();
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   
@@ -509,14 +511,14 @@ export default function ProductsTab() {
                   </div>
                 </div>
                 
-                <p className="text-xl font-bold text-brand-green mb-2">${product.price}</p>
+                <p className="text-xl font-bold text-brand-green mb-2">{formatPrice(product.price)}</p>
                 
                 <div className="text-sm text-gray-600 space-y-1 mb-4">
                   <div><strong>Sizes:</strong> {product.sizes.join(', ') || 'None'}</div>
                   <div><strong>Stock:</strong> {product.stock || 0}</div>
                   <div><strong>Category:</strong> {product.category || 'Uncategorized'}</div>
                   {product.isCustomizable && (
-                    <div><strong>Custom Fee:</strong> ${product.customPrice || 0}</div>
+                    <div><strong>Custom Fee:</strong> {formatPrice(product.customPrice || 0)}</div>
                   )}
                 </div>
 
@@ -897,7 +899,7 @@ export default function ProductsTab() {
                 <div className="space-y-2 text-sm">
                   <div><strong>Product Name:</strong> {deleteConfirm.product.name}</div>
                   <div><strong>Category:</strong> {deleteConfirm.product.category || 'Uncategorized'}</div>
-                  <div><strong>Price:</strong> ${deleteConfirm.product.price.toFixed(2)}</div>
+                  <div><strong>Price:</strong> {formatPrice(deleteConfirm.product.price)}</div>
                   <div><strong>Status:</strong> {deleteConfirm.product.isActive ? 'Active' : 'Inactive'}</div>
                   {deleteConfirm.product.stock !== undefined && (
                     <div><strong>Stock:</strong> {deleteConfirm.product.stock}</div>

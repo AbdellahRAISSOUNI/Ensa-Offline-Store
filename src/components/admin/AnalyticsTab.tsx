@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface AnalyticsData {
   totalRevenue: number;
@@ -25,6 +26,7 @@ interface AnalyticsData {
 }
 
 export default function AnalyticsTab() {
+  const { formatPrice } = useCurrency();
   const [analytics, setAnalytics] = useState<AnalyticsData>({
     totalRevenue: 0,
     totalOrders: 0,
@@ -211,7 +213,7 @@ export default function AnalyticsTab() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-white border-6 border-black shadow-brutal p-6 text-center">
           <div className="text-4xl mb-3">💰</div>
-          <div className="text-3xl font-bold text-black mb-2">${analytics.totalRevenue.toFixed(2)}</div>
+          <div className="text-3xl font-bold text-black mb-2">{formatPrice(analytics.totalRevenue)}</div>
           <div className="text-sm text-brand-accent font-bold uppercase tracking-wider">Total Revenue</div>
           <div className={`text-xs mt-2 font-bold ${analytics.recentOrdersGrowth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
             {analytics.recentOrdersGrowth >= 0 ? '↗' : '↘'} {Math.abs(analytics.recentOrdersGrowth).toFixed(1)}% (7d)
@@ -227,7 +229,7 @@ export default function AnalyticsTab() {
         
         <div className="bg-white border-6 border-black shadow-brutal p-6 text-center">
           <div className="text-4xl mb-3">📊</div>
-          <div className="text-3xl font-bold text-black mb-2">${analytics.averageOrderValue.toFixed(2)}</div>
+          <div className="text-3xl font-bold text-black mb-2">{formatPrice(analytics.averageOrderValue)}</div>
           <div className="text-sm text-brand-accent font-bold uppercase tracking-wider">Average Order</div>
           <div className="text-xs mt-2 text-gray-500">Per order</div>
         </div>
@@ -265,7 +267,7 @@ export default function AnalyticsTab() {
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="font-bold text-black">${product.revenue.toFixed(2)}</div>
+                    <div className="font-bold text-black">{formatPrice(product.revenue)}</div>
                     <div className="text-sm text-gray-500">revenue</div>
                   </div>
                 </div>
@@ -335,7 +337,7 @@ export default function AnalyticsTab() {
                   <h4 className="font-bold text-black">{cityData.city}</h4>
                   <div className="text-sm text-brand-accent font-bold">{cityData.count} orders</div>
                 </div>
-                <div className="text-lg font-bold text-brand-green">${cityData.revenue.toFixed(2)}</div>
+                <div className="text-lg font-bold text-brand-green">{formatPrice(cityData.revenue)}</div>
                 <div className="text-sm text-gray-500">total revenue</div>
               </div>
             ))}
@@ -387,8 +389,8 @@ export default function AnalyticsTab() {
           <div>
             <h4 className="text-lg font-bold text-brand-green mb-3">Sales Performance</h4>
             <ul className="space-y-2 text-sm">
-              <li>• Total revenue of ${analytics.totalRevenue.toFixed(2)} from {analytics.totalOrders} orders</li>
-              <li>• Average order value of ${analytics.averageOrderValue.toFixed(2)}</li>
+              <li>• Total revenue of {formatPrice(analytics.totalRevenue)} from {analytics.totalOrders} orders</li>
+              <li>• Average order value of {formatPrice(analytics.averageOrderValue)}</li>
               <li>• {analytics.customOrdersPercentage.toFixed(1)}% of orders include custom text</li>
               <li>• {analytics.ordersByStatus.filter(s => s.status === 'delivered').reduce((sum, s) => sum + s.count, 0)} orders successfully delivered</li>
             </ul>

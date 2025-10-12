@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import Link from "next/link";
 import { SecretTextVault } from "./SecretTextVault";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface ProductImage {
   original: string;
@@ -36,6 +37,7 @@ export function ProductCard({ product, index }: ProductCardProps) {
   const [isHovered, setIsHovered] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showSecretVault, setShowSecretVault] = useState(false);
+  const { formatPrice } = useCurrency();
 
   useEffect(() => {
     if (!cardRef.current) return;
@@ -263,11 +265,11 @@ export function ProductCard({ product, index }: ProductCardProps) {
         
         <div className="flex items-center justify-between mb-4">
           <div className="text-2xl sm:text-3xl font-bold text-black">
-            ${product.price}
+            {formatPrice(product.price)}
           </div>
           {product.isCustomizable && (
             <div className="text-sm text-brand-accent font-bold">
-              +${product.customPrice || 0} custom
+              +{formatPrice(product.customPrice || 0)} custom
             </div>
           )}
         </div>

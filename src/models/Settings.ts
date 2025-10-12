@@ -12,6 +12,10 @@ export interface SettingsDocument extends mongoose.Document {
     isActive: boolean;
   }>;
   
+  // Currency Settings
+  defaultCurrency: 'MAD' | 'USD';
+  exchangeRate: number; // 1 USD = X MAD
+  
   // Site Configuration
   isOrderingEnabled: boolean;
   maintenanceMode: boolean;
@@ -42,6 +46,10 @@ const SettingsSchema = new Schema<SettingsDocument>(
       value: { type: Number, required: true, min: 0 },
       isActive: { type: Boolean, default: true },
     }],
+    
+    // Currency Settings
+    defaultCurrency: { type: String, enum: ['MAD', 'USD'], default: 'MAD' },
+    exchangeRate: { type: Number, default: 10, min: 0.1 },
     
     // Site Configuration
     isOrderingEnabled: { type: Boolean, default: true },

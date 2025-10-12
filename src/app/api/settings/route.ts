@@ -54,6 +54,8 @@ export async function GET() {
             isActive: true,
           },
         ],
+        defaultCurrency: 'MAD',
+        exchangeRate: 10,
         isOrderingEnabled: true,
         maintenanceMode: false,
         contactInfo: {

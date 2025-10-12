@@ -27,6 +27,7 @@ import {
   MoreVertical,
   Plus
 } from "lucide-react";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface Order {
   _id: string;
@@ -78,6 +79,7 @@ interface CreateOrderFormData {
 }
 
 export default function OrdersTab() {
+  const { formatPrice } = useCurrency();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState<string>("");
@@ -987,7 +989,7 @@ export default function OrdersTab() {
               {filteredAndSortedOrders.length} order{filteredAndSortedOrders.length !== 1 ? 's' : ''} found
             </p>
             <p className="text-sm text-gray-500">
-              Total: ${filteredAndSortedOrders.reduce((sum, order) => sum + order.pricing.totalPrice, 0).toFixed(2)}
+              Total: {formatPrice(filteredAndSortedOrders.reduce((sum, order) => sum + order.pricing.totalPrice, 0))}
         </p>
           </div>
         </div>
@@ -1383,13 +1385,13 @@ export default function OrdersTab() {
                 <div className="space-y-4">
                   <h3 className="text-lg font-bold text-black border-b-3 border-black pb-2">Pricing Breakdown</h3>
                   <div className="space-y-2">
-                    <div><strong>Base Price:</strong> ${selectedOrder.pricing.basePrice.toFixed(2)}</div>
+                    <div><strong>Base Price:</strong> {formatPrice(selectedOrder.pricing.basePrice)}</div>
                     {selectedOrder.pricing.customFee > 0 && (
-                      <div><strong>Custom Fee:</strong> ${selectedOrder.pricing.customFee.toFixed(2)}</div>
+                      <div><strong>Custom Fee:</strong> {formatPrice(selectedOrder.pricing.customFee)}</div>
                     )}
-                    <div><strong>Shipping Fee:</strong> ${selectedOrder.pricing.shippingFee.toFixed(2)}</div>
+                    <div><strong>Shipping Fee:</strong> {formatPrice(selectedOrder.pricing.shippingFee)}</div>
                     <div className="border-t-3 border-black pt-2">
-                      <strong className="text-lg">Total: ${selectedOrder.pricing.totalPrice.toFixed(2)}</strong>
+                      <strong className="text-lg">Total: {formatPrice(selectedOrder.pricing.totalPrice)}</strong>
                     </div>
                   </div>
                 </div>
@@ -1436,7 +1438,7 @@ export default function OrdersTab() {
                    <div><strong>Order ID:</strong> {deleteConfirm.order.orderId}</div>
                    <div><strong>Customer:</strong> {deleteConfirm.order.customerInfo.fullName}</div>
                    <div><strong>Product:</strong> {deleteConfirm.order.productDetails?.productId?.name || 'Unknown Product'}</div>
-                   <div><strong>Total:</strong> ${deleteConfirm.order.pricing.totalPrice.toFixed(2)}</div>
+                   <div><strong>Total:</strong> {formatPrice(deleteConfirm.order.pricing.totalPrice)}</div>
                  </div>
                </div>
 

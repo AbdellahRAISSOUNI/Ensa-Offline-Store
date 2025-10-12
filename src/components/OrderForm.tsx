@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface OrderFormProps {
   product: {
@@ -37,6 +38,7 @@ export function OrderForm({ product }: OrderFormProps) {
   const priceRef = useRef<HTMLDivElement>(null);
   const successRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const { formatPrice, currency } = useCurrency();
   
   const [formData, setFormData] = useState<FormData>({
     fullName: "",
@@ -287,7 +289,9 @@ export function OrderForm({ product }: OrderFormProps) {
           basePrice: product.price,
           customPrice: isCustomTextEnabled && product.customPrice ? product.customPrice : 0,
           shippingFee: calculateShippingFee(formData.city),
-          totalPrice: calculateTotalPrice()
+          totalPrice: calculateTotalPrice(),
+          currency: currency,
+          exchangeRate: 10 // 1 USD = 10 MAD
         }
       };
 
@@ -390,7 +394,7 @@ export function OrderForm({ product }: OrderFormProps) {
             {product.name}
           </h2>
           <div className="text-xl font-bold text-black">
-            Base Price: ${product.price}
+            Base Price: {formatPrice(product.price)}
           </div>
         </div>
 
@@ -493,7 +497,7 @@ export function OrderForm({ product }: OrderFormProps) {
             <option value="">Select City</option>
             {cities.map((city) => (
               <option key={city.name} value={city.name}>
-                {city.name} {city.fee > 0 ? `(+$${city.fee})` : city.isTetouan ? "(FREE)" : ""}
+                {city.name} {city.fee > 0 ? `(+${formatPrice(city.fee)})` : city.isTetouan ? "(FREE)" : ""}
               </option>
             ))}
           </select>
@@ -515,7 +519,7 @@ export function OrderForm({ product }: OrderFormProps) {
                 className="w-5 h-5 text-brand-green border-3 focus:ring-brand-green"
               />
               <span className="text-sm font-bold uppercase tracking-wider text-black">
-                Add Custom Text (+${product.customPrice || 0})
+                Add Custom Text (+{formatPrice(product.customPrice || 0)})
               </span>
             </label>
             
@@ -555,26 +559,26 @@ export function OrderForm({ product }: OrderFormProps) {
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span>Base Price:</span>
-              <span>${product.price}</span>
+              <span>{formatPrice(product.price)}</span>
             </div>
             {isCustomTextEnabled && product.customPrice && (
               <div className="flex justify-between">
                 <span>Custom Text:</span>
-                <span>+${product.customPrice}</span>
+                <span>+{formatPrice(product.customPrice)}</span>
               </div>
             )}
             {formData.city && (
               <div className="flex justify-between">
                 <span>Shipping to {formData.city}:</span>
                 <span>
-                  +${cities.find(city => city.name === formData.city)?.fee || 0}
+                  +{formatPrice(cities.find(city => city.name === formData.city)?.fee || 0)}
                 </span>
               </div>
             )}
             <div className="border-t border-white pt-2 mt-4">
               <div className="flex justify-between font-bold text-brand-green text-lg">
                 <span>Total:</span>
-                <span>${calculateTotalPrice()}</span>
+                <span>{formatPrice(calculateTotalPrice())}</span>
               </div>
             </div>
           </div>
@@ -586,7 +590,7 @@ export function OrderForm({ product }: OrderFormProps) {
           disabled={isSubmitting}
           className="w-full bg-brand-green text-black border-6 shadow-brutalLg hover:shadow-brutalMd transition-all duration-300 font-display font-bold text-lg uppercase tracking-wider py-4 px-6 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? "Submitting Order..." : `Place Order - $${calculateTotalPrice()}`}
+          {isSubmitting ? "Submitting Order..." : `Place Order - ${formatPrice(calculateTotalPrice())}`}
         </button>
       </form>
     </div>

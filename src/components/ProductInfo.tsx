@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface ProductInfoProps {
   product: {
@@ -22,6 +23,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
   const infoRef = useRef<HTMLDivElement>(null);
   const priceRef = useRef<HTMLDivElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const { formatPrice, convertPrice } = useCurrency();
   
   const [selectedSize, setSelectedSize] = useState("");
   const [isCustom, setIsCustom] = useState(false);
@@ -261,10 +263,10 @@ export function ProductInfo({ product }: ProductInfoProps) {
           {product.name}
         </h1>
         <div ref={priceRef} className="text-2xl sm:text-3xl font-bold text-black">
-          ${product.price}
+          {formatPrice(product.price)}
           {isCustom && product.customPrice && (
             <span className="text-lg text-brand-accent ml-2">
-              + ${product.customPrice} custom
+              + {formatPrice(product.customPrice)} custom
             </span>
           )}
         </div>
@@ -310,7 +312,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
                 className="w-5 h-5 text-brand-green border-3 focus:ring-brand-green"
               />
               <span className="text-sm font-bold uppercase tracking-wider text-black">
-                Add Custom Text (+${product.customPrice || 0})
+                Add Custom Text (+{formatPrice(product.customPrice || 0)})
               </span>
             </label>
             
@@ -346,7 +348,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
                 {city.name}
                 {city.fee > 0 && (
                   <div className="text-xs text-brand-accent mt-1">
-                    +${city.fee}
+                    +{formatPrice(city.fee)}
                   </div>
                 )}
                 {city.isTetouan && (
@@ -367,12 +369,12 @@ export function ProductInfo({ product }: ProductInfoProps) {
                 Total Price:
               </span>
               <span className="text-xl font-bold">
-                ${calculateTotalPrice()}
+                {formatPrice(calculateTotalPrice())}
               </span>
             </div>
             {shippingFee > 0 && (
               <div className="text-xs text-gray-300 mt-1">
-                Includes ${shippingFee} shipping to {selectedCity}
+                Includes {formatPrice(shippingFee)} shipping to {selectedCity}
               </div>
             )}
           </div>
@@ -389,7 +391,7 @@ export function ProductInfo({ product }: ProductInfoProps) {
                 type="button"
                 className="w-full bg-brand-green text-black border-6 shadow-brutalLg hover:shadow-brutalMd transition-all duration-300 font-display font-bold text-lg uppercase tracking-wider py-4 px-6"
               >
-                Order Now - ${calculateTotalPrice()}
+                Order Now - {formatPrice(calculateTotalPrice())}
               </button>
             </Link>
             

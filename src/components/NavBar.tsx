@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { CurrencyToggle } from "@/components/ui/CurrencyToggle";
 
 // Register ScrollTrigger plugin
 if (typeof window !== "undefined") {
@@ -281,6 +282,7 @@ export function NavBar() {
               Contact
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-brand-green transition-all duration-200 group-hover:w-full"></span>
             </Link>
+            <CurrencyToggle size="sm" />
           </nav>
 
           {/* Mobile menu button */}
@@ -325,6 +327,9 @@ export function NavBar() {
             >
               Contact
             </Link>
+            <div className="mobile-nav-item px-3 py-2">
+              <CurrencyToggle size="sm" />
+            </div>
           </div>
         </div>
       </div>

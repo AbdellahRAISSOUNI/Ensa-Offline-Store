@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { CurrencyToggle } from "@/components/ui/CurrencyToggle";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -84,6 +85,7 @@ export function Header() {
             <Link href="/products" className="px-3 py-2 border-3 hover:translate-x-0.5 hover:translate-y-0.5 transition-transform">Products</Link>
             <Link href="/contact" className="px-3 py-2 border-3 hover:translate-x-0.5 hover:translate-y-0.5 transition-transform">Contact</Link>
           </nav>
+          <CurrencyToggle size="sm" className="hidden sm:inline-flex" />
           <button aria-label="Cart" className="hidden sm:inline-flex p-2 border-3 shadow-brutal hover:translate-x-0.5 hover:translate-y-0.5 transition-transform">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M6 6h15l-2 9H8L6 6Z" stroke="#000" strokeWidth="2"/>
@@ -103,14 +105,17 @@ export function Header() {
           <Link href="/" onClick={() => open && toggleMenu()} className="px-3 py-2 border-3">Home</Link>
           <Link href="/products" onClick={() => open && toggleMenu()} className="px-3 py-2 border-3">Products</Link>
           <Link href="/contact" onClick={() => open && toggleMenu()} className="px-3 py-2 border-3">Contact</Link>
-          <button aria-label="Cart" className="mt-2 inline-flex items-center gap-2 px-3 py-2 border-3">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M6 6h15l-2 9H8L6 6Z" stroke="#000" strokeWidth="2"/>
-              <circle cx="9" cy="20" r="1.5" fill="#000"/>
-              <circle cx="18" cy="20" r="1.5" fill="#000"/>
-            </svg>
-            Cart
-          </button>
+          <div className="mt-2 flex items-center justify-between">
+            <button aria-label="Cart" className="inline-flex items-center gap-2 px-3 py-2 border-3">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 6h15l-2 9H8L6 6Z" stroke="#000" strokeWidth="2"/>
+                <circle cx="9" cy="20" r="1.5" fill="#000"/>
+                <circle cx="18" cy="20" r="1.5" fill="#000"/>
+              </svg>
+              Cart
+            </button>
+            <CurrencyToggle size="sm" />
+          </div>
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useCurrency } from "@/contexts/CurrencyContext";
 
 interface Settings {
   productPrices: Record<string, number>;
@@ -26,6 +27,7 @@ interface Settings {
 }
 
 export default function SettingsTab() {
+  const { formatPrice } = useCurrency();
   const [settings, setSettings] = useState<Settings>({
     productPrices: {},
     shippingFees: {},
@@ -321,7 +323,7 @@ export default function SettingsTab() {
         {/* Custom Text Price */}
         <div className="mb-6">
           <label className="block text-sm font-bold uppercase tracking-wider text-black mb-2">
-            Custom Text Fee ($)
+            Custom Text Fee ({formatPrice(0).replace(/[0-9.,]/g, '')})
           </label>
           <input
             type="number"
@@ -343,7 +345,7 @@ export default function SettingsTab() {
               <div key={city} className="flex items-center justify-between p-3 bg-gray-50 border-3 border-gray-300">
                 <div className="font-bold text-black">{city}</div>
                 <div className="flex items-center">
-                  <span className="mr-2">$</span>
+                  <span className="mr-2">{formatPrice(0).replace(/[0-9.,]/g, '')}</span>
                   <input
                     type="number"
                     value={settings.shippingFees[city] || 0}
@@ -418,7 +420,7 @@ export default function SettingsTab() {
                       className="w-full px-3 py-2 border-3 border-gray-300 focus:border-black transition-colors font-body text-black disabled:bg-gray-100"
                     >
                       <option value="percentage">Percentage (%)</option>
-                      <option value="fixed">Fixed Amount ($)</option>
+                      <option value="fixed">Fixed Amount ({formatPrice(0).replace(/[0-9.,]/g, '')})</option>
                     </select>
                   </div>
                   <div>

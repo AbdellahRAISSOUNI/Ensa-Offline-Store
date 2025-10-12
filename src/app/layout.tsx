@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { ConditionalLayout } from "@/components/ConditionalLayout";
+import { CurrencyProvider } from "@/contexts/CurrencyContext";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -52,7 +53,9 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/favicon.ico?v=2" />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <ConditionalLayout>{children}</ConditionalLayout>
+        <CurrencyProvider>
+          <ConditionalLayout>{children}</ConditionalLayout>
+        </CurrencyProvider>
       </body>
     </html>
   );

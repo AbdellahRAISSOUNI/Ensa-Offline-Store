@@ -60,6 +60,8 @@ export async function POST(request: NextRequest) {
         customFee,
         shippingFee,
         totalPrice,
+        currency: body.pricing?.currency || 'MAD',
+        exchangeRate: body.pricing?.exchangeRate || 10,
       },
       status: 'pending',
     });

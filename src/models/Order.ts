@@ -27,6 +27,8 @@ export interface OrderDocument extends mongoose.Document {
     customFee: number;
     shippingFee: number;
     totalPrice: number;
+    currency: string; // Store the currency used for this order
+    exchangeRate: number; // Store the exchange rate used at time of order
   };
   status: OrderStatus;
   createdAt: Date;
@@ -53,6 +55,8 @@ const OrderSchema = new Schema<OrderDocument>(
       customFee: { type: Number, required: true, min: 0, default: 0 },
       shippingFee: { type: Number, required: true, min: 0 },
       totalPrice: { type: Number, required: true, min: 0 },
+      currency: { type: String, required: true, default: 'MAD' },
+      exchangeRate: { type: Number, required: true, default: 10 },
     },
     status: {
       type: String,

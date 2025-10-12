@@ -61,6 +61,8 @@ const SettingsSchema = new mongoose.Schema({
     value: { type: Number, required: true, min: 0 },
     isActive: { type: Boolean, default: true },
   }],
+  defaultCurrency: { type: String, enum: ['MAD', 'USD'], default: 'MAD' },
+  exchangeRate: { type: Number, default: 10, min: 0.1 },
   isOrderingEnabled: { type: Boolean, default: true },
   maintenanceMode: { type: Boolean, default: false },
   contactInfo: {

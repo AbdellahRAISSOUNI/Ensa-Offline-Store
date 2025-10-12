@@ -15,6 +15,7 @@ import {
   ChevronRight
 } from "lucide-react";
 import AdminBottomNav from "@/components/admin/AdminBottomNav";
+import { CurrencyToggle } from "@/components/ui/CurrencyToggle";
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -149,6 +150,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
                 </p>
               </div>
               <div className="flex items-center space-x-4">
+                <CurrencyToggle variant="admin" size="sm" />
                 <div className="text-right">
                   <p className="text-sm font-bold text-black">{user?.username}</p>
                   <p className="text-xs text-gray-500">Administrator</p>
