@@ -144,55 +144,70 @@ export function NavBar() {
   const toggleMobileMenu = () => {
     if (!mobileMenuRef.current || !hamburgerRef.current) return;
 
+    // Add immediate click feedback
+    gsap.to(hamburgerRef.current, {
+      scale: 0.95,
+      duration: 0.1,
+      ease: "power2.out",
+      yoyo: true,
+      repeat: 1
+    });
+
     const tl = gsap.timeline();
     
     if (!isMobileMenuOpen) {
-      // Open menu
+      // Open menu - Start hamburger animation immediately
       setIsMobileMenuOpen(true);
-      tl.to(mobileMenuRef.current, {
+      
+      // Immediate hamburger transformation - smooth and modern
+      tl.to(hamburgerRef.current.querySelector(".hamburger-line:nth-child(1)"), {
+        rotation: 45,
+        y: 6,
+        duration: 0.4,
+        ease: "power3.out"
+      })
+      .to(hamburgerRef.current.querySelector(".hamburger-line:nth-child(2)"), {
+        opacity: 0,
+        scaleX: 0,
+        duration: 0.3,
+        ease: "power2.inOut",
+        transformOrigin: "center"
+      }, "-=0.4")
+      .to(hamburgerRef.current.querySelector(".hamburger-line:nth-child(3)"), {
+        rotation: -45,
+        y: -6,
+        duration: 0.4,
+        ease: "power3.out"
+      }, "-=0.4")
+      // Menu panel reveal - smooth and clean
+      .to(mobileMenuRef.current, {
         height: "auto",
         opacity: 1,
         duration: 0.4,
         ease: "power2.out"
-      })
+      }, "-=0.2")
+      // Menu items stagger reveal - subtle and elegant
       .fromTo(
         mobileMenuRef.current.querySelectorAll(".mobile-nav-item"),
-        { opacity: 0, y: 20, rotation: 2 },
+        { opacity: 0, y: 15, scale: 0.95 },
         { 
           opacity: 1, 
           y: 0, 
-          rotation: 0,
+          scale: 1,
           duration: 0.3,
-          stagger: 0.1,
-          ease: "back.out(1.7)"
+          stagger: 0.08,
+          ease: "back.out(1.2)"
         },
         "-=0.2"
-      )
-      .to(hamburgerRef.current.querySelector(".hamburger-line:nth-child(1)"), {
-        rotation: 45,
-        y: 6,
-        duration: 0.3,
-        ease: "power2.out"
-      }, "-=0.1")
-      .to(hamburgerRef.current.querySelector(".hamburger-line:nth-child(2)"), {
-        opacity: 0,
-        duration: 0.2,
-        ease: "power2.out"
-      }, "-=0.3")
-      .to(hamburgerRef.current.querySelector(".hamburger-line:nth-child(3)"), {
-        rotation: -45,
-        y: -6,
-        duration: 0.3,
-        ease: "power2.out"
-      }, "-=0.3");
+      );
     } else {
-      // Close menu
+      // Close menu - Start hamburger animation immediately
       tl.to(mobileMenuRef.current.querySelectorAll(".mobile-nav-item"), {
         opacity: 0,
-        y: -20,
-        rotation: -2,
+        y: -15,
+        scale: 0.95,
         duration: 0.2,
-        stagger: 0.05,
+        stagger: 0.04,
         ease: "power2.in"
       })
       .to(mobileMenuRef.current, {
@@ -201,23 +216,25 @@ export function NavBar() {
         duration: 0.3,
         ease: "power2.in"
       }, "-=0.1")
+      // Hamburger return to original state - smooth and clean
       .to(hamburgerRef.current.querySelector(".hamburger-line:nth-child(1)"), {
         rotation: 0,
         y: 0,
-        duration: 0.3,
-        ease: "power2.out"
-      }, "-=0.1")
+        duration: 0.4,
+        ease: "power3.out"
+      }, "-=0.2")
       .to(hamburgerRef.current.querySelector(".hamburger-line:nth-child(2)"), {
         opacity: 1,
-        duration: 0.2,
+        scaleX: 1,
+        duration: 0.3,
         ease: "power2.out"
-      }, "-=0.2")
+      }, "-=0.4")
       .to(hamburgerRef.current.querySelector(".hamburger-line:nth-child(3)"), {
         rotation: 0,
         y: 0,
-        duration: 0.3,
-        ease: "power2.out"
-      }, "-=0.2")
+        duration: 0.4,
+        ease: "power3.out"
+      }, "-=0.4")
       .call(() => setIsMobileMenuOpen(false));
     }
   };
@@ -236,19 +253,19 @@ export function NavBar() {
   return (
     <header 
       ref={headerRef}
-      className="fixed top-0 left-0 right-0 z-50 bg-white border-b-6 transition-all duration-300"
+      className="fixed top-0 left-0 right-0 z-50 bg-white border-b-3 xs:border-b-4 sm:border-b-6 transition-all duration-300"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
-          {/* Logo */}
+          {/* Logo - Mobile Optimized */}
           <div ref={logoRef} className="flex-shrink-0">
             <Link href="/" className="group">
-              <div className="flex items-center space-x-2">
-                <span className="text-xl sm:text-2xl lg:text-3xl font-display font-black tracking-tight">
-                  <span className="px-2 py-1 bg-black text-white shadow-brutal group-hover:shadow-brutalMd transition-all duration-200">
+              <div className="flex items-center space-x-1 xs:space-x-2">
+                <span className="text-lg xs:text-xl sm:text-2xl lg:text-3xl font-display font-black tracking-tight">
+                  <span className="px-1.5 py-0.5 xs:px-2 xs:py-1 bg-black text-white shadow-brutal group-hover:shadow-brutalMd transition-all duration-200">
                     ENSA
                   </span>
-                  <span className="px-2 py-1 bg-brand-green text-black border-3 shadow-brutal group-hover:shadow-brutalMd transition-all duration-200 ml-1">
+                  <span className="px-1.5 py-0.5 xs:px-2 xs:py-1 bg-brand-green text-black border-2 xs:border-3 shadow-brutal group-hover:shadow-brutalMd transition-all duration-200 ml-0.5 xs:ml-1">
                     OFFLINE
                   </span>
                 </span>
@@ -293,9 +310,9 @@ export function NavBar() {
               className="relative w-8 h-8 flex flex-col justify-center items-center group"
               aria-label="Toggle mobile menu"
             >
-              <span className="hamburger-line w-6 h-0.5 bg-black transition-all duration-300 ease-out"></span>
-              <span className="hamburger-line w-6 h-0.5 bg-black transition-all duration-300 ease-out mt-1"></span>
-              <span className="hamburger-line w-6 h-0.5 bg-black transition-all duration-300 ease-out mt-1"></span>
+              <span className="hamburger-line w-6 h-0.5 bg-black"></span>
+              <span className="hamburger-line w-6 h-0.5 bg-black mt-1"></span>
+              <span className="hamburger-line w-6 h-0.5 bg-black mt-1"></span>
             </button>
           </div>
         </div>

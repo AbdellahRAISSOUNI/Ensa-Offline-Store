@@ -27,17 +27,17 @@ export const BrutalistTextFlip = ({
   }, [words.length, duration]);
 
   return (
-    <div className={cn("flex items-center gap-2", className)}>
+    <div className={cn("flex items-center gap-1 xs:gap-2", className)}>
       <motion.span
         layoutId="brutalist-text"
-        className={cn("text-2xl sm:text-3xl font-display font-black tracking-tight uppercase", textColor)}
+        className={cn("text-lg xs:text-xl sm:text-2xl md:text-3xl font-display font-black tracking-tight uppercase", textColor)}
       >
         {text}
       </motion.span>
 
       <motion.div
         layout
-        className="relative overflow-hidden border-4 border-white bg-brand-green shadow-brutal px-3 py-1"
+        className="relative overflow-hidden border-2 xs:border-3 sm:border-4 border-white bg-brand-green shadow-brutal px-2 py-1 xs:px-3 xs:py-1"
       >
         <AnimatePresence mode="popLayout">
           <motion.span
@@ -54,7 +54,7 @@ export const BrutalistTextFlip = ({
               ease: "easeInOut",
             }}
             className={cn(
-              "inline-block whitespace-nowrap text-2xl sm:text-3xl font-display font-black tracking-tight text-black uppercase"
+              "inline-block whitespace-nowrap text-lg xs:text-xl sm:text-2xl md:text-3xl font-display font-black tracking-tight text-black uppercase"
             )}
           >
             {words[currentIndex]}
