@@ -65,7 +65,7 @@ export function CurrencyToggle({
         <span className="text-sm">
           {currency === 'MAD' ? '🇲🇦' : '🇺🇸'}
         </span>
-        <span>{currency}</span>
+        <span className="text-xs font-bold">{currency}</span>
       </div>
     </div>
   );

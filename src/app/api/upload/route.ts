@@ -86,40 +86,45 @@ export async function POST(request: NextRequest) {
     }
 
     const formData = await request.formData();
-    const file = formData.get('image') as File;
+    const files = formData.getAll('images') as File[];
 
-    if (!file) {
-      return createErrorResponse('No image file provided', 400, 'Bad Request');
+    if (!files || files.length === 0) {
+      return createErrorResponse('No image files provided', 400, 'Bad Request');
     }
 
-    // Validate file type
-    if (!ALLOWED_TYPES.includes(file.type)) {
-      return createErrorResponse(
-        `Invalid file type. Allowed types: ${ALLOWED_TYPES.join(', ')}`,
-        400,
-        'Bad Request'
-      );
+    const uploadResults = [];
+    
+    for (const file of files) {
+      // Validate file type
+      if (!ALLOWED_TYPES.includes(file.type)) {
+        return createErrorResponse(
+          `Invalid file type for ${file.name}. Allowed types: ${ALLOWED_TYPES.join(', ')}`,
+          400,
+          'Bad Request'
+        );
+      }
+
+      // Validate file size
+      if (file.size > MAX_FILE_SIZE) {
+        return createErrorResponse(
+          `File ${file.name} too large. Maximum size: ${MAX_FILE_SIZE / 1024 / 1024}MB`,
+          413,
+          'Request Entity Too Large'
+        );
+      }
+
+      // Convert file to buffer
+      const bytes = await file.arrayBuffer();
+      const buffer = Buffer.from(bytes);
+
+      // Upload to Cloudinary
+      const imageResult = await uploadToCloudinary(buffer, file.name);
+      uploadResults.push(imageResult);
     }
-
-    // Validate file size
-    if (file.size > MAX_FILE_SIZE) {
-      return createErrorResponse(
-        `File too large. Maximum size: ${MAX_FILE_SIZE / 1024 / 1024}MB`,
-        413,
-        'Request Entity Too Large'
-      );
-    }
-
-    // Convert file to buffer
-    const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    // Upload to Cloudinary
-    const images = await uploadToCloudinary(buffer, file.name);
 
     return createResponse({
-      message: 'Image uploaded successfully',
-      images: images
+      message: `${uploadResults.length} image(s) uploaded successfully`,
+      images: uploadResults
     });
 
   } catch (error) {
