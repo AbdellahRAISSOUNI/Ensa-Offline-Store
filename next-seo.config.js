@@ -5,12 +5,12 @@ const defaultSEOConfig = {
   
   description: 'ENSA Tetouan official merchandise store - ENSA Maroc | ENSA Morocco. Shop ENSA clothing, ENSA hoodies, ENSA t-shirts for ENSA students and ENSA alumni in Tetouan, Morocco.',
   
-  canonical: 'https://ensaoffline.com',
+  canonical: 'https://www.ensa-offline.store',
   
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://ensaoffline.com',
+    url: 'https://www.ensa-offline.store',
     siteName: 'ENSA OFFLINE',
     title: 'ENSA Tetouan Merchandise | ENSA OFFLINE',
     description: 'ENSA Tetouan official merchandise store - ENSA Maroc. Shop ENSA clothing for ENSA students and ENSA alumni in Tetouan, Morocco.',

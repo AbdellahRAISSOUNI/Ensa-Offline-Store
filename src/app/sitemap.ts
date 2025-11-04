@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://ensaoffline.com'
+  const baseUrl = 'https://www.ensa-offline.store'
   
   // Get current date
   const currentDate = new Date().toISOString()

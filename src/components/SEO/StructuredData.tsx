@@ -4,9 +4,9 @@ export function StructuredData() {
     "@graph": [
       {
         "@type": "Organization",
-        "@id": "https://ensaoffline.com/#organization",
+        "@id": "https://www.ensa-offline.store/#organization",
         name: "ENSA OFFLINE",
-        url: "https://ensaoffline.com",
+        url: "https://www.ensa-offline.store",
         logo: "https://www.ensa-offline.store/ensa-offline.png?v=2",
         description: "Official ENSA Tetouan merchandise store - ENSA Maroc. Premium streetwear, custom apparel, and authentic ENSA OFFLINE collection.",
         address: {
@@ -29,8 +29,8 @@ export function StructuredData() {
       },
       {
         "@type": "WebSite",
-        "@id": "https://ensaoffline.com/#website",
-        url: "https://ensaoffline.com",
+        "@id": "https://www.ensa-offline.store/#website",
+        url: "https://www.ensa-offline.store",
         name: "ENSA OFFLINE",
         description: "Official ENSA Tetouan merchandise store - ENSA Tetouan, ENSA Maroc. Shop premium streetwear, hoodies, t-shirts, and custom apparel for ENSA students and alumni.",
         inLanguage: "en-US",
@@ -38,22 +38,22 @@ export function StructuredData() {
           "@type": "SearchAction",
           target: {
             "@type": "EntryPoint",
-            urlTemplate: "https://ensaoffline.com/products?search={search_term_string}"
+            urlTemplate: "https://www.ensa-offline.store/products?search={search_term_string}"
           },
           "query-input": "required name=search_term_string"
         }
       },
       {
         "@type": "WebPage",
-        "@id": "https://ensaoffline.com/#webpage",
-        url: "https://ensaoffline.com",
+        "@id": "https://www.ensa-offline.store/#webpage",
+        url: "https://www.ensa-offline.store",
         name: "ENSA OFFLINE Store - Official ENSA Tetouan Merchandise",
         description: "Official ENSA Tetouan merchandise store - ENSA Maroc. Shop premium streetwear, hoodies, t-shirts, and custom apparel designed for ENSA students and alumni in Tetouan, Morocco.",
         isPartOf: {
-          "@id": "https://ensaoffline.com/#website"
+          "@id": "https://www.ensa-offline.store/#website"
         },
         about: {
-          "@id": "https://ensaoffline.com/#organization"
+          "@id": "https://www.ensa-offline.store/#organization"
         },
         primaryImageOfPage: {
           "@type": "ImageObject",
@@ -64,10 +64,10 @@ export function StructuredData() {
       },
       {
         "@type": "Store",
-        "@id": "https://ensaoffline.com/#store",
+        "@id": "https://www.ensa-offline.store/#store",
         name: "ENSA OFFLINE Store",
         description: "Official ENSA Tetouan merchandise store - ENSA Tetouan, ENSA Maroc, ENSA Morocco",
-        url: "https://ensaoffline.com",
+        url: "https://www.ensa-offline.store",
         image: "https://www.ensa-offline.store/ensa-offline.png?v=2",
         address: {
           "@type": "PostalAddress",
@@ -95,11 +95,11 @@ export function StructuredData() {
       },
       {
         "@type": "CollegeOrUniversity",
-        "@id": "https://ensaoffline.com/#university",
+        "@id": "https://www.ensa-offline.store/#university",
         name: "ENSA Tetouan",
         alternateName: ["ENSA Maroc", "ENSA Morocco", "ENSA"],
         description: "École Nationale des Sciences Appliquées de Tétouan",
-        url: "https://ensaoffline.com",
+        url: "https://www.ensa-offline.store",
         address: {
           "@type": "PostalAddress",
           addressLocality: "Tetouan",

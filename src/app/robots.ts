@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = 'https://ensaoffline.com'
+  const baseUrl = 'https://www.ensa-offline.store'
   
   return {
     rules: [

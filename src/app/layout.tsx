@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     template: "%s | ENSA OFFLINE"
   },
   description: "ENSA Tetouan official merchandise store - ENSA Maroc | ENSA Morocco. Shop premium ENSA clothing, ENSA hoodies, ENSA t-shirts, and custom ENSA apparel for ENSA students and ENSA alumni in Tetouan, Morocco. ENSA campus culture and ENSA community apparel.",
-  metadataBase: new URL("https://ensaoffline.com"),
+  metadataBase: new URL("https://www.ensa-offline.store"),
   icons: {
     icon: "/favicon.ico?v=3",
     shortcut: "/favicon.ico?v=3",
