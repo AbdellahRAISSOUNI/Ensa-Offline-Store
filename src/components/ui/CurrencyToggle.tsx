@@ -61,10 +61,12 @@ export function CurrencyToggle({
       onClick={handleCurrencyChange}
       title={`Switch to ${currency === 'USD' ? 'Moroccan Dirhams (MAD)' : 'US Dollars (USD)'}`}
     >
-      <div className="flex items-center space-x-1">
-        <span className="text-sm">
-          {currency === 'MAD' ? '🇲🇦' : '🇺🇸'}
-        </span>
+      <div className="flex items-center gap-1.5">
+        <span
+          className={`fi ${currency === 'MAD' ? 'fi-ma' : 'fi-us'}`}
+          style={{ width: '1.25em', height: '0.94em', fontSize: '1em' }}
+          aria-hidden
+        />
         <span className="text-xs font-bold">{currency}</span>
       </div>
     </div>

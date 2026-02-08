@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Flag icons for currency selector - renders properly on Windows */
+@import 'flag-icons/css/flag-icons.min.css';
+
 :root {
   --background: #ffffff;
   --foreground: #111111;
