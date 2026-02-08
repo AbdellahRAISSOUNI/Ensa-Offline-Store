@@ -29,7 +29,6 @@
     "tailwind-merge": "^2.5.5"
   },
   "devDependencies": {
-    "@types/gsap": "^3.0.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
