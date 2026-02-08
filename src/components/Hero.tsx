@@ -1,8 +1,9 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 import { BrutalistRippleEffect } from "@/components/ui/brutalist-ripple-effect";
 import { BrutalistTextFlip } from "@/components/ui/BrutalistTextFlip";
 
@@ -19,7 +20,24 @@ export function Hero() {
   const shapesRef = useRef<HTMLDivElement>(null);
   const linesRef = useRef<HTMLDivElement>(null);
   const videoSectionRef = useRef<HTMLDivElement>(null);
+  const showcaseImageRef = useRef<HTMLDivElement>(null);
+  const showcaseContentRef = useRef<HTMLDivElement>(null);
+  const showcaseHeadlineRef = useRef<HTMLDivElement>(null);
+  const showcaseTaglineRef = useRef<HTMLDivElement>(null);
+  const showcaseDecoRef = useRef<HTMLDivElement>(null);
+  const accentSquareRef = useRef<HTMLDivElement>(null);
+  const diagonalStripeRef = useRef<HTMLDivElement>(null);
   const accentShapesRef = useRef<HTMLDivElement>(null);
+
+  const showcaseWords = ["CREATION.", "CHAOS.", "FIRE.", "PRESSURE.", "BATTLE."];
+  const [showcaseWordIndex, setShowcaseWordIndex] = useState(0);
+
+  useEffect(() => {
+    const t = setInterval(() => {
+      setShowcaseWordIndex((i) => (i + 1) % showcaseWords.length);
+    }, 2800);
+    return () => clearInterval(t);
+  }, [showcaseWords.length]);
 
   useEffect(() => {
     if (!heroRef.current) return;
@@ -175,23 +193,94 @@ export function Hero() {
         );
       }
 
-      // Enhanced video section entrance
+      // Showcase section: scroll-triggered reveal (image + content)
       if (videoSectionRef.current) {
-        gsap.fromTo(videoSectionRef.current,
-          { 
-            y: 120,
-            opacity: 0,
-            scale: 0.9
-          },
-          { 
-            y: 0,
-            opacity: 1,
-            scale: 1,
-            duration: 1.2,
-            ease: "power3.out",
-            delay: 2.5
-          }
-        );
+        const imageEl = showcaseImageRef.current;
+        const contentEl = showcaseContentRef.current;
+        const headlineEl = showcaseHeadlineRef.current;
+        const taglineEl = showcaseTaglineRef.current;
+        const decoEl = showcaseDecoRef.current;
+
+        if (imageEl) {
+          gsap.set(imageEl, { x: -80, opacity: 0 });
+          ScrollTrigger.create({
+            trigger: videoSectionRef.current,
+            start: "top 82%",
+            toggleActions: "play none none none",
+            onEnter: () => {
+              gsap.to(imageEl, { x: 0, opacity: 1, duration: 1, ease: "power3.out" });
+            },
+          });
+        }
+        if (headlineEl) {
+          gsap.set(headlineEl, { x: 50, opacity: 0 });
+          ScrollTrigger.create({
+            trigger: videoSectionRef.current,
+            start: "top 80%",
+            toggleActions: "play none none none",
+            onEnter: () => {
+              gsap.to(headlineEl, { x: 0, opacity: 1, duration: 0.9, ease: "power3.out", delay: 0.15 });
+            },
+          });
+        }
+        if (taglineEl) {
+          gsap.set(taglineEl, { x: 40, opacity: 0 });
+          ScrollTrigger.create({
+            trigger: videoSectionRef.current,
+            start: "top 80%",
+            toggleActions: "play none none none",
+            onEnter: () => {
+              gsap.to(taglineEl, { x: 0, opacity: 1, duration: 0.9, ease: "power3.out", delay: 0.3 });
+            },
+          });
+        }
+        if (decoEl) {
+          gsap.set(decoEl, { y: 30, opacity: 0 });
+          ScrollTrigger.create({
+            trigger: videoSectionRef.current,
+            start: "top 80%",
+            toggleActions: "play none none none",
+            onEnter: () => {
+              gsap.to(decoEl, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out", delay: 0.45 });
+            },
+          });
+        }
+
+        // Infinite “life” animations in showcase section
+        const accentSquare = accentSquareRef.current;
+        const diagonalStripe = diagonalStripeRef.current;
+        const badges = videoSectionRef.current?.querySelectorAll(".showcase-badge");
+        if (accentSquare) {
+          gsap.to(accentSquare, {
+            y: "+=6",
+            duration: 2.2,
+            ease: "sine.inOut",
+            repeat: -1,
+            yoyo: true,
+          });
+        }
+        if (diagonalStripe) {
+          gsap.to(diagonalStripe, {
+            scaleY: 0.82,
+            duration: 2.5,
+            ease: "sine.inOut",
+            repeat: -1,
+            yoyo: true,
+            transformOrigin: "bottom",
+          });
+        }
+        if (badges?.length) {
+          badges.forEach((badge, i) => {
+            gsap.to(badge, {
+              scale: 1.04,
+              duration: 1.8 + i * 0.2,
+              ease: "sine.inOut",
+              repeat: -1,
+              yoyo: true,
+              delay: i * 0.3,
+            });
+          });
+        }
       }
 
       // Enhanced parallax with multiple layers
@@ -378,75 +467,109 @@ export function Hero() {
         <div className="absolute bottom-0 right-0 w-20 h-20 bg-brand-green border-t-6 border-l-6 border-black"></div>
       </section>
 
-      {/* Enhanced Video Section */}
-      <section 
+      {/* Showcase Section: portrait image + copy (replaces video block) */}
+      <section
         ref={videoSectionRef}
-        className="relative py-20 sm:py-28 bg-black"
+        className="relative py-16 sm:py-24 lg:py-28 bg-black overflow-hidden"
       >
         <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Enhanced Section Header */}
-          <div className="text-center mb-16">
-            <h2 className="text-5xl sm:text-6xl md:text-7xl font-display font-black text-white mb-6 uppercase tracking-tight">
-              <span className="inline-block bg-brand-green text-black px-6 py-3 border-6 shadow-brutalLg transform -skew-x-2">
-                FEELINGS
-              </span>
-              <span className="inline-block bg-white text-black px-6 py-3 border-6 shadow-brutalLg transform skew-x-2 ml-3">
-                MAY BE HURT
-              </span>
-            </h2>
-            <p className="text-xl sm:text-2xl text-brand-green font-bold uppercase tracking-wider">
-              RAW. UNFILTERED. BRUTAL.
-            </p>
-          </div>
-
-          {/* Enhanced Video Container */}
-          <div className="relative">
-            {/* Enhanced brutal border frame */}
-            <div className="absolute -inset-6 bg-brand-green border-6 shadow-brutalLg"></div>
-            <div className="absolute -inset-3 bg-white border-6 shadow-brutal"></div>
-            
-            {/* Enhanced video placeholder */}
-            <div className="relative bg-black border-6 shadow-brutal aspect-video overflow-hidden">
-              <img
-                src="/DSC_0154.jpg"
-                alt="ENSA OFFLINE Team - Manifesto of Chaos"
-                className="w-full h-full object-cover filter grayscale hover:grayscale-0 transition-all duration-500"
-              />
-              
-              {/* Enhanced play button overlay - circular with subtle pulse */}
-              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-60 group hover:bg-opacity-40 transition-all duration-300 cursor-pointer">
-                <div className="relative w-28 h-28 sm:w-36 sm:h-36 rounded-full bg-brand-green border-6 shadow-brutalLg flex items-center justify-center transform group-hover:scale-110 transition-transform duration-300">
-                  {/* pulse rings */}
-                  <div className="absolute inset-0 rounded-full border-4 border-black/40 animate-ping"></div>
-                  <div className="absolute inset-0 rounded-full border-4 border-brand-green/60 animate-pulse"></div>
-                  {/* play triangle */}
-                  <div className="relative w-0 h-0 border-l-10 sm:border-l-14 border-l-black border-y-8 sm:border-y-10 border-y-transparent ml-2"></div>
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-center min-h-0">
+            {/* Left: portrait image - keeps natural ratio, no stretch */}
+            <div
+              ref={showcaseImageRef}
+              className="lg:col-span-5 flex justify-center lg:justify-end order-2 lg:order-1"
+            >
+              <div className="relative w-full max-w-md">
+                <div className="absolute -inset-4 bg-brand-green border-6 shadow-brutalLg -z-10"></div>
+                <div className="relative border-6 border-white shadow-brutal overflow-hidden bg-black">
+                  <img
+                    src="/allfour.jpg"
+                    alt="ENSA OFFLINE — grace under pressure"
+                    className="w-full h-auto block"
+                  />
+                  <div className="absolute top-3 left-3 w-10 h-10 bg-brand-green border-4 shadow-brutal"></div>
+                  <div className="absolute top-3 right-3 w-10 h-10 bg-white border-4 shadow-brutal"></div>
+                  <div className="absolute bottom-3 left-3 w-10 h-10 bg-white border-4 shadow-brutal"></div>
+                  <div className="absolute bottom-3 right-3 w-10 h-10 bg-brand-green border-4 shadow-brutal"></div>
                 </div>
               </div>
-              
-              {/* Enhanced corner decorations */}
-              <div className="absolute top-3 left-3 w-10 h-10 bg-brand-green border-4 shadow-brutal"></div>
-              <div className="absolute top-3 right-3 w-10 h-10 bg-white border-4 shadow-brutal"></div>
-              <div className="absolute bottom-3 left-3 w-10 h-10 bg-white border-4 shadow-brutal"></div>
-              <div className="absolute bottom-3 right-3 w-10 h-10 bg-brand-green border-4 shadow-brutal"></div>
             </div>
-          </div>
 
-          {/* Enhanced video description */}
-          <div className="mt-12 text-center">
-            <div className="inline-block bg-white px-8 py-4 border-6 shadow-brutal transform -skew-x-2">
-              <p className="text-black font-bold uppercase tracking-wider skew-x-2 text-lg">
-                WHERE CHAOS MEETS CREATION - THE ENSA OFFLINE PHILOSOPHY
-              </p>
+            {/* Right: headline + tagline — brutalist, asymmetric */}
+            <div
+              ref={showcaseContentRef}
+              className="lg:col-span-7 flex flex-col justify-center order-1 lg:order-2 text-center lg:text-left relative"
+            >
+              {/* Accent shape behind type — infinite float */}
+              <div ref={accentSquareRef} className="hidden lg:block absolute -top-4 -right-4 w-24 h-24 bg-brand-green border-6 shadow-brutalLg transform rotate-12 z-0" aria-hidden />
+              {/* Diagonal stripe — sporty motion accent, infinite pulse */}
+              <div ref={diagonalStripeRef} className="hidden lg:block absolute bottom-8 right-0 w-2 lg:w-3 h-32 bg-brand-green transform rotate-[-8deg] origin-bottom z-0" aria-hidden />
+
+              <div ref={showcaseHeadlineRef} className="relative z-10">
+                <h2 className="font-display font-black uppercase tracking-tighter leading-none">
+                  <span className="block w-fit text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-black bg-brand-green border-6 shadow-brutalLg px-4 py-2 sm:px-5 sm:py-3 -skew-x-3 mt-0 mb-1 sm:mb-2">
+                    FEELINGS
+                  </span>
+                  <span className="block w-fit text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white bg-black border-6 shadow-brutalLg px-4 py-2 sm:px-5 sm:py-3 skew-x-2 mt-2 sm:mt-3 lg:ml-8">
+                    MAY BE HURT
+                  </span>
+                </h2>
+              </div>
+
+              {/* Thick rule + three words */}
+              <div ref={showcaseTaglineRef} className="relative z-10 mt-6 sm:mt-8">
+                <div className="h-2 sm:h-3 bg-brand-green border-4 border-black shadow-brutal w-full max-w-xs lg:max-w-sm ml-0 lg:ml-12" />
+                <div className="mt-4 sm:mt-5 flex flex-wrap gap-2 sm:gap-3 justify-center lg:justify-start">
+                <span className="showcase-badge inline-block bg-white text-black border-4 border-black px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base font-black uppercase tracking-widest shadow-brutal">
+                  RAW
+                </span>
+                <span className="showcase-badge inline-block bg-white text-black border-4 border-black px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base font-black uppercase tracking-widest shadow-brutal rotate-1">
+                  UNFILTERED
+                </span>
+                <span className="showcase-badge inline-block bg-white text-black border-4 border-black px-3 py-1.5 sm:px-4 sm:py-2 text-sm sm:text-base font-black uppercase tracking-widest shadow-brutal -rotate-1">
+                  BRUTAL
+                </span>
+                </div>
+              </div>
+
+              <div ref={showcaseDecoRef} className="relative z-10 mt-8 sm:mt-10 lg:mt-12">
+                {/* Small wordmark — Nike/Adidas-style brand bar */}
+                <p className="text-white/70 font-bold uppercase tracking-[0.35em] text-xs sm:text-sm mb-4 lg:mb-5">
+                  ENSA OFFLINE
+                </p>
+                {/* Campaign line: big type, wide tracking */}
+                <div className="relative">
+                  <p className="text-white font-black uppercase tracking-[0.12em] sm:tracking-[0.18em] text-xl sm:text-2xl lg:text-3xl leading-tight max-w-md lg:max-w-lg">
+                    NO APOLOGIES.
+                  </p>
+                  <p className="text-brand-green font-black uppercase tracking-[0.12em] sm:tracking-[0.18em] text-xl sm:text-2xl lg:text-3xl leading-tight mt-1 lg:mt-2 min-h-[1.2em]">
+                    JUST{" "}
+                    <AnimatePresence mode="wait">
+                      <motion.span
+                        key={showcaseWordIndex}
+                        initial={{ y: 12, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: -12, opacity: 0 }}
+                        transition={{ duration: 0.35, ease: "easeOut" }}
+                        className="inline-block"
+                      >
+                        {showcaseWords[showcaseWordIndex]}
+                      </motion.span>
+                    </AnimatePresence>
+                  </p>
+                  {/* Dynamic underline — extends past text, sporty accent */}
+                  <div className="mt-3 lg:mt-4 h-1 w-24 sm:w-32 bg-brand-green" aria-hidden />
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Enhanced background brutal elements */}
-        <div className="absolute top-12 left-12 w-16 h-16 bg-brand-green border-6 shadow-brutal transform rotate-45"></div>
-        <div className="absolute top-24 right-20 w-12 h-24 bg-white border-6 shadow-brutal transform -rotate-12"></div>
-        <div className="absolute bottom-20 left-24 w-20 h-12 bg-brand-green border-6 shadow-brutal transform rotate-12"></div>
-        <div className="absolute bottom-12 right-16 w-16 h-16 bg-white border-6 shadow-brutal transform -rotate-45"></div>
+        {/* Background brutal shapes */}
+        <div className="absolute top-12 left-12 w-16 h-16 bg-brand-green border-6 shadow-brutal transform rotate-45 pointer-events-none"></div>
+        <div className="absolute top-24 right-20 w-12 h-24 bg-white border-6 shadow-brutal transform -rotate-12 pointer-events-none"></div>
+        <div className="absolute bottom-20 left-24 w-20 h-12 bg-brand-green border-6 shadow-brutal transform rotate-12 pointer-events-none"></div>
+        <div className="absolute bottom-12 right-16 w-16 h-16 bg-white border-6 shadow-brutal transform -rotate-45 pointer-events-none"></div>
       </section>
     </>
   );
