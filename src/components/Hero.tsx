@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { BrutalistRippleEffect } from "@/components/ui/brutalist-ripple-effect";
 import { BrutalistTextFlip } from "@/components/ui/BrutalistTextFlip";
@@ -481,11 +482,14 @@ export function Hero() {
             >
               <div className="relative w-full max-w-md">
                 <div className="absolute -inset-4 bg-brand-green border-6 shadow-brutalLg -z-10"></div>
-                <div className="relative border-6 border-white shadow-brutal overflow-hidden bg-black">
-                  <img
+                <div className="relative border-6 border-white shadow-brutal overflow-hidden bg-black aspect-[3/4]">
+                  <Image
                     src="/allfour.jpg"
                     alt="ENSA OFFLINE — grace under pressure"
-                    className="w-full h-auto block"
+                    fill
+                    sizes="(max-width: 1024px) 100vw, min(448px, 50vw)"
+                    className="object-cover"
+                    loading="lazy"
                   />
                   <div className="absolute top-3 left-3 w-10 h-10 bg-brand-green border-4 shadow-brutal"></div>
                   <div className="absolute top-3 right-3 w-10 h-10 bg-white border-4 shadow-brutal"></div>
